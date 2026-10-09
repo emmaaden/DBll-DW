@@ -1,0 +1,208 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" font-family="Segoe UI, Arial, sans-serif">
+<rect width="1200" height="680" fill="#FFFFFF"/>
+<line x1="600.0" y1="411.0" x2="170.0" y2="225.0" stroke="#64748B" stroke-width="2"/>
+<line x1="600.0" y1="411.0" x2="170.0" y2="551.0" stroke="#64748B" stroke-width="2"/>
+<line x1="600.0" y1="411.0" x2="600.0" y2="104.0" stroke="#64748B" stroke-width="2"/>
+<line x1="600.0" y1="411.0" x2="1030.0" y2="148.0" stroke="#64748B" stroke-width="2"/>
+<line x1="600.0" y1="411.0" x2="1030.0" y2="393.0" stroke="#64748B" stroke-width="2"/>
+<line x1="600.0" y1="411.0" x2="1030.0" y2="551.0" stroke="#64748B" stroke-width="2"/>
+<rect x="460" y="250" width="280" height="322" rx="6" fill="#FFFFFF" stroke="#6F4EF6" stroke-width="2"/>
+<path d="M460 280 V256 a6 6 0 0 1 6 -6 H734 a6 6 0 0 1 6 6 V280 Z" fill="#6F4EF6"/>
+<text x="600.0" y="270" fill="#FFFFFF" font-size="14" font-weight="700" text-anchor="middle">Fact_Turno</text>
+<text x="470" y="299" font-size="11" font-weight="700" fill="#B45309">PK</text>
+<text x="498" y="299" font-size="12.5" fill="#0F172A" font-weight="700">id_turno</text>
+<text x="730" y="299" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<text x="470" y="321" font-size="11" font-weight="700" fill="#2563EB">FK</text>
+<text x="498" y="321" font-size="12.5" fill="#0F172A" font-weight="700">sk_tiempo</text>
+<text x="730" y="321" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<text x="470" y="343" font-size="11" font-weight="700" fill="#2563EB">FK</text>
+<text x="498" y="343" font-size="12.5" fill="#0F172A" font-weight="700">sk_horario</text>
+<text x="730" y="343" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<text x="470" y="365" font-size="11" font-weight="700" fill="#2563EB">FK</text>
+<text x="498" y="365" font-size="12.5" fill="#0F172A" font-weight="700">sk_paciente</text>
+<text x="730" y="365" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<text x="470" y="387" font-size="11" font-weight="700" fill="#2563EB">FK</text>
+<text x="498" y="387" font-size="12.5" fill="#0F172A" font-weight="700">sk_profesional</text>
+<text x="730" y="387" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<text x="470" y="409" font-size="11" font-weight="700" fill="#2563EB">FK</text>
+<text x="498" y="409" font-size="12.5" fill="#0F172A" font-weight="700">sk_especialidad</text>
+<text x="730" y="409" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<text x="470" y="431" font-size="11" font-weight="700" fill="#2563EB">FK</text>
+<text x="498" y="431" font-size="12.5" fill="#0F172A" font-weight="700">sk_estado</text>
+<text x="730" y="431" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<rect x="461" y="438" width="278" height="22" fill="#F1EDFF"/>
+<text x="470" y="453" font-size="11" font-weight="700" fill="#6F4EF6">M</text>
+<text x="498" y="453" font-size="12.5" fill="#0F172A">cantidad_turnos</text>
+<text x="730" y="453" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<rect x="461" y="460" width="278" height="22" fill="#F1EDFF"/>
+<text x="470" y="475" font-size="11" font-weight="700" fill="#6F4EF6">M</text>
+<text x="498" y="475" font-size="12.5" fill="#0F172A">turno_atendido</text>
+<text x="730" y="475" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<rect x="461" y="482" width="278" height="22" fill="#F1EDFF"/>
+<text x="470" y="497" font-size="11" font-weight="700" fill="#6F4EF6">M</text>
+<text x="498" y="497" font-size="12.5" fill="#0F172A">turno_cancelado</text>
+<text x="730" y="497" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<rect x="461" y="504" width="278" height="22" fill="#F1EDFF"/>
+<text x="470" y="519" font-size="11" font-weight="700" fill="#6F4EF6">M</text>
+<text x="498" y="519" font-size="12.5" fill="#0F172A">turno_ausente</text>
+<text x="730" y="519" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<rect x="461" y="526" width="278" height="22" fill="#F1EDFF"/>
+<text x="470" y="541" font-size="11" font-weight="700" fill="#6F4EF6">M</text>
+<text x="498" y="541" font-size="12.5" fill="#0F172A">turno_pendiente</text>
+<text x="730" y="541" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<rect x="461" y="548" width="278" height="22" fill="#F1EDFF"/>
+<text x="470" y="563" font-size="11" font-weight="700" fill="#6F4EF6">M</text>
+<text x="498" y="563" font-size="12.5" fill="#0F172A">edad_paciente</text>
+<text x="730" y="563" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<rect x="40" y="20" width="260" height="410" rx="6" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+<path d="M40 50 V26 a6 6 0 0 1 6 -6 H294 a6 6 0 0 1 6 6 V50 Z" fill="#1E293B"/>
+<text x="170.0" y="40" fill="#FFFFFF" font-size="14" font-weight="700" text-anchor="middle">Dim_Tiempo</text>
+<text x="50" y="69" font-size="11" font-weight="700" fill="#B45309">PK</text>
+<text x="78" y="69" font-size="12.5" fill="#0F172A" font-weight="700">sk_tiempo</text>
+<text x="290" y="69" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<text x="50" y="91" font-size="11" font-weight="700" fill="#000"></text>
+<text x="78" y="91" font-size="12.5" fill="#0F172A">fecha</text>
+<text x="290" y="91" font-size="11.5" fill="#64748B" text-anchor="end">DATE</text>
+<text x="50" y="113" font-size="11" font-weight="700" fill="#000"></text>
+<text x="78" y="113" font-size="12.5" fill="#0F172A">fecha_desc</text>
+<text x="290" y="113" font-size="11.5" fill="#64748B" text-anchor="end">VARCHAR(10)</text>
+<text x="50" y="135" font-size="11" font-weight="700" fill="#000"></text>
+<text x="78" y="135" font-size="12.5" fill="#0F172A">anio</text>
+<text x="290" y="135" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<text x="50" y="157" font-size="11" font-weight="700" fill="#000"></text>
+<text x="78" y="157" font-size="12.5" fill="#0F172A">id_semestre</text>
+<text x="290" y="157" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<text x="50" y="179" font-size="11" font-weight="700" fill="#000"></text>
+<text x="78" y="179" font-size="12.5" fill="#0F172A">semestre_desc</text>
+<text x="290" y="179" font-size="11.5" fill="#64748B" text-anchor="end">VARCHAR(20)</text>
+<text x="50" y="201" font-size="11" font-weight="700" fill="#000"></text>
+<text x="78" y="201" font-size="12.5" fill="#0F172A">id_trimestre</text>
+<text x="290" y="201" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<text x="50" y="223" font-size="11" font-weight="700" fill="#000"></text>
+<text x="78" y="223" font-size="12.5" fill="#0F172A">trimestre_desc</text>
+<text x="290" y="223" font-size="11.5" fill="#64748B" text-anchor="end">VARCHAR(20)</text>
+<text x="50" y="245" font-size="11" font-weight="700" fill="#000"></text>
+<text x="78" y="245" font-size="12.5" fill="#0F172A">id_mes</text>
+<text x="290" y="245" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<text x="50" y="267" font-size="11" font-weight="700" fill="#000"></text>
+<text x="78" y="267" font-size="12.5" fill="#0F172A">mes</text>
+<text x="290" y="267" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<text x="50" y="289" font-size="11" font-weight="700" fill="#000"></text>
+<text x="78" y="289" font-size="12.5" fill="#0F172A">nombre_mes</text>
+<text x="290" y="289" font-size="11.5" fill="#64748B" text-anchor="end">VARCHAR(20)</text>
+<text x="50" y="311" font-size="11" font-weight="700" fill="#000"></text>
+<text x="78" y="311" font-size="12.5" fill="#0F172A">mes_anio_desc</text>
+<text x="290" y="311" font-size="11.5" fill="#64748B" text-anchor="end">VARCHAR(20)</text>
+<text x="50" y="333" font-size="11" font-weight="700" fill="#000"></text>
+<text x="78" y="333" font-size="12.5" fill="#0F172A">semana_anio</text>
+<text x="290" y="333" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<text x="50" y="355" font-size="11" font-weight="700" fill="#000"></text>
+<text x="78" y="355" font-size="12.5" fill="#0F172A">dia_mes</text>
+<text x="290" y="355" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<text x="50" y="377" font-size="11" font-weight="700" fill="#000"></text>
+<text x="78" y="377" font-size="12.5" fill="#0F172A">dia_semana</text>
+<text x="290" y="377" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<text x="50" y="399" font-size="11" font-weight="700" fill="#000"></text>
+<text x="78" y="399" font-size="12.5" fill="#0F172A">nombre_dia</text>
+<text x="290" y="399" font-size="11.5" fill="#64748B" text-anchor="end">VARCHAR(20)</text>
+<text x="50" y="421" font-size="11" font-weight="700" fill="#000"></text>
+<text x="78" y="421" font-size="12.5" fill="#0F172A">es_fin_de_semana</text>
+<text x="290" y="421" font-size="11.5" fill="#64748B" text-anchor="end">VARCHAR(2)</text>
+<rect x="40" y="500" width="260" height="102" rx="6" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+<path d="M40 530 V506 a6 6 0 0 1 6 -6 H294 a6 6 0 0 1 6 6 V530 Z" fill="#1E293B"/>
+<text x="170.0" y="520" fill="#FFFFFF" font-size="14" font-weight="700" text-anchor="middle">Dim_Estado</text>
+<text x="50" y="549" font-size="11" font-weight="700" fill="#B45309">PK</text>
+<text x="78" y="549" font-size="12.5" fill="#0F172A" font-weight="700">sk_estado</text>
+<text x="290" y="549" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<text x="50" y="571" font-size="11" font-weight="700" fill="#000"></text>
+<text x="78" y="571" font-size="12.5" fill="#0F172A">estado</text>
+<text x="290" y="571" font-size="11.5" fill="#64748B" text-anchor="end">VARCHAR(20)</text>
+<text x="50" y="593" font-size="11" font-weight="700" fill="#000"></text>
+<text x="78" y="593" font-size="12.5" fill="#0F172A">tipo_estado</text>
+<text x="290" y="593" font-size="11.5" fill="#64748B" text-anchor="end">VARCHAR(20)</text>
+<rect x="470" y="20" width="260" height="168" rx="6" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+<path d="M470 50 V26 a6 6 0 0 1 6 -6 H724 a6 6 0 0 1 6 6 V50 Z" fill="#1E293B"/>
+<text x="600.0" y="40" fill="#FFFFFF" font-size="14" font-weight="700" text-anchor="middle">Dim_Horario</text>
+<text x="480" y="69" font-size="11" font-weight="700" fill="#B45309">PK</text>
+<text x="508" y="69" font-size="12.5" fill="#0F172A" font-weight="700">sk_horario</text>
+<text x="720" y="69" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<text x="480" y="91" font-size="11" font-weight="700" fill="#000"></text>
+<text x="508" y="91" font-size="12.5" fill="#0F172A">hora</text>
+<text x="720" y="91" font-size="11.5" fill="#64748B" text-anchor="end">TIME</text>
+<text x="480" y="113" font-size="11" font-weight="700" fill="#000"></text>
+<text x="508" y="113" font-size="12.5" fill="#0F172A">hora_desc</text>
+<text x="720" y="113" font-size="11.5" fill="#64748B" text-anchor="end">VARCHAR(5)</text>
+<text x="480" y="135" font-size="11" font-weight="700" fill="#000"></text>
+<text x="508" y="135" font-size="12.5" fill="#0F172A">hora_del_dia</text>
+<text x="720" y="135" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<text x="480" y="157" font-size="11" font-weight="700" fill="#000"></text>
+<text x="508" y="157" font-size="12.5" fill="#0F172A">franja_horaria</text>
+<text x="720" y="157" font-size="11.5" fill="#64748B" text-anchor="end">VARCHAR(20)</text>
+<text x="480" y="179" font-size="11" font-weight="700" fill="#000"></text>
+<text x="508" y="179" font-size="12.5" fill="#0F172A">orden_franja</text>
+<text x="720" y="179" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<rect x="900" y="20" width="260" height="256" rx="6" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+<path d="M900 50 V26 a6 6 0 0 1 6 -6 H1154 a6 6 0 0 1 6 6 V50 Z" fill="#1E293B"/>
+<text x="1030.0" y="40" fill="#FFFFFF" font-size="14" font-weight="700" text-anchor="middle">Dim_Paciente</text>
+<text x="910" y="69" font-size="11" font-weight="700" fill="#B45309">PK</text>
+<text x="938" y="69" font-size="12.5" fill="#0F172A" font-weight="700">sk_paciente</text>
+<text x="1150" y="69" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<text x="910" y="91" font-size="11" font-weight="700" fill="#000"></text>
+<text x="938" y="91" font-size="12.5" fill="#0F172A">id_paciente</text>
+<text x="1150" y="91" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<text x="910" y="113" font-size="11" font-weight="700" fill="#000"></text>
+<text x="938" y="113" font-size="12.5" fill="#0F172A">dni</text>
+<text x="1150" y="113" font-size="11.5" fill="#64748B" text-anchor="end">VARCHAR(30)</text>
+<text x="910" y="135" font-size="11" font-weight="700" fill="#000"></text>
+<text x="938" y="135" font-size="12.5" fill="#0F172A">nombre_completo</text>
+<text x="1150" y="135" font-size="11.5" fill="#64748B" text-anchor="end">VARCHAR(255)</text>
+<text x="910" y="157" font-size="11" font-weight="700" fill="#000"></text>
+<text x="938" y="157" font-size="12.5" fill="#0F172A">sexo</text>
+<text x="1150" y="157" font-size="11.5" fill="#64748B" text-anchor="end">VARCHAR(20)</text>
+<text x="910" y="179" font-size="11" font-weight="700" fill="#000"></text>
+<text x="938" y="179" font-size="12.5" fill="#0F172A">fecha_nacimiento</text>
+<text x="1150" y="179" font-size="11.5" fill="#64748B" text-anchor="end">DATE</text>
+<text x="910" y="201" font-size="11" font-weight="700" fill="#000"></text>
+<text x="938" y="201" font-size="12.5" fill="#0F172A">edad</text>
+<text x="1150" y="201" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<text x="910" y="223" font-size="11" font-weight="700" fill="#000"></text>
+<text x="938" y="223" font-size="12.5" fill="#0F172A">rango_etario</text>
+<text x="1150" y="223" font-size="11.5" fill="#64748B" text-anchor="end">VARCHAR(30)</text>
+<text x="910" y="245" font-size="11" font-weight="700" fill="#000"></text>
+<text x="938" y="245" font-size="12.5" fill="#0F172A">obra_social</text>
+<text x="1150" y="245" font-size="11.5" fill="#64748B" text-anchor="end">VARCHAR(100)</text>
+<text x="910" y="267" font-size="11" font-weight="700" fill="#000"></text>
+<text x="938" y="267" font-size="12.5" fill="#0F172A">localidad</text>
+<text x="1150" y="267" font-size="11.5" fill="#64748B" text-anchor="end">VARCHAR(100)</text>
+<rect x="900" y="320" width="260" height="146" rx="6" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+<path d="M900 350 V326 a6 6 0 0 1 6 -6 H1154 a6 6 0 0 1 6 6 V350 Z" fill="#1E293B"/>
+<text x="1030.0" y="340" fill="#FFFFFF" font-size="14" font-weight="700" text-anchor="middle">Dim_Profesional</text>
+<text x="910" y="369" font-size="11" font-weight="700" fill="#B45309">PK</text>
+<text x="938" y="369" font-size="12.5" fill="#0F172A" font-weight="700">sk_profesional</text>
+<text x="1150" y="369" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<text x="910" y="391" font-size="11" font-weight="700" fill="#000"></text>
+<text x="938" y="391" font-size="12.5" fill="#0F172A">id_profesional</text>
+<text x="1150" y="391" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<text x="910" y="413" font-size="11" font-weight="700" fill="#000"></text>
+<text x="938" y="413" font-size="12.5" fill="#0F172A">dni</text>
+<text x="1150" y="413" font-size="11.5" fill="#64748B" text-anchor="end">VARCHAR(30)</text>
+<text x="910" y="435" font-size="11" font-weight="700" fill="#000"></text>
+<text x="938" y="435" font-size="12.5" fill="#0F172A">nombre_completo</text>
+<text x="1150" y="435" font-size="11.5" fill="#64748B" text-anchor="end">VARCHAR(255)</text>
+<text x="910" y="457" font-size="11" font-weight="700" fill="#000"></text>
+<text x="938" y="457" font-size="12.5" fill="#0F172A">matricula</text>
+<text x="1150" y="457" font-size="11.5" fill="#64748B" text-anchor="end">VARCHAR(50)</text>
+<rect x="900" y="500" width="260" height="102" rx="6" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+<path d="M900 530 V506 a6 6 0 0 1 6 -6 H1154 a6 6 0 0 1 6 6 V530 Z" fill="#1E293B"/>
+<text x="1030.0" y="520" fill="#FFFFFF" font-size="14" font-weight="700" text-anchor="middle">Dim_Especialidad</text>
+<text x="910" y="549" font-size="11" font-weight="700" fill="#B45309">PK</text>
+<text x="938" y="549" font-size="12.5" fill="#0F172A" font-weight="700">sk_especialidad</text>
+<text x="1150" y="549" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<text x="910" y="571" font-size="11" font-weight="700" fill="#000"></text>
+<text x="938" y="571" font-size="12.5" fill="#0F172A">id_especialidad</text>
+<text x="1150" y="571" font-size="11.5" fill="#64748B" text-anchor="end">INT</text>
+<text x="910" y="593" font-size="11" font-weight="700" fill="#000"></text>
+<text x="938" y="593" font-size="12.5" fill="#0F172A">nombre_especialidad</text>
+<text x="1150" y="593" font-size="11.5" fill="#64748B" text-anchor="end">VARCHAR(255)</text>
+<text x="40" y="654" font-size="12" fill="#334155"><tspan font-weight="700" fill="#B45309">PK</tspan> clave primaria   <tspan font-weight="700" fill="#2563EB">FK</tspan> clave foránea a la dimensión   <tspan font-weight="700" fill="#6F4EF6">M</tspan> medida   ·   Grano del hecho: 1 fila = 1 turno   ·   Relación de cada dimensión con el hecho: 1 a N</text>
+</svg>

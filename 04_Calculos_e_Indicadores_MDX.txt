@@ -1,0 +1,175 @@
+﻿/* =====================================================================
+   TP FINAL - BASE DE DATOS II
+   Archivo 04: Calculos e Indicadores (KPI) del cubo OLAP
+
+   Los nombres de abajo SUPONEN que en Visual Studio renombraste:
+     Medidas:     Cantidad Turnos, Turnos Atendidos, Turnos Cancelados,
+                  Turnos Ausentes, Turnos Pendientes, Suma Edad
+     Dimension:   Tiempo  con jerarquia  Calendario  (Año > Semestre > Trimestre > Mes > Fecha)
+   (ver GUIA_TP.md, paso 4)
+   ===================================================================== */
+
+
+/* =====================================================================
+   PARTE A - MIEMBROS CALCULADOS
+   Visual Studio > Cubo > pestaña "Calculations" > boton "Script View"
+   (el icono de hoja con lineas). Dejar el CALCULATE; que ya esta y pegar
+   debajo todo lo siguiente. Guardar.
+   ===================================================================== */
+
+CREATE MEMBER CURRENTCUBE.[Measures].[Turnos Cerrados]
+ AS [Measures].[Turnos Atendidos] + [Measures].[Turnos Cancelados] + [Measures].[Turnos Ausentes],
+FORMAT_STRING = "#,##0",
+VISIBLE = 1, DISPLAY_FOLDER = 'Indicadores';
+
+CREATE MEMBER CURRENTCUBE.[Measures].[Tasa Asistencia]
+ AS IIF([Measures].[Turnos Cerrados] = 0, NULL,
+        [Measures].[Turnos Atendidos] / [Measures].[Turnos Cerrados]),
+FORMAT_STRING = "0.0%",
+VISIBLE = 1, DISPLAY_FOLDER = 'Indicadores';
+
+CREATE MEMBER CURRENTCUBE.[Measures].[Tasa Ausentismo]
+ AS IIF([Measures].[Turnos Cerrados] = 0, NULL,
+        [Measures].[Turnos Ausentes] / [Measures].[Turnos Cerrados]),
+FORMAT_STRING = "0.0%",
+VISIBLE = 1, DISPLAY_FOLDER = 'Indicadores';
+
+CREATE MEMBER CURRENTCUBE.[Measures].[Tasa Cancelacion]
+ AS IIF([Measures].[Turnos Cerrados] = 0, NULL,
+        [Measures].[Turnos Cancelados] / [Measures].[Turnos Cerrados]),
+FORMAT_STRING = "0.0%",
+VISIBLE = 1, DISPLAY_FOLDER = 'Indicadores';
+
+CREATE MEMBER CURRENTCUBE.[Measures].[Edad Promedio]
+ AS IIF([Measures].[Cantidad Turnos] = 0, NULL,
+        [Measures].[Suma Edad] / [Measures].[Cantidad Turnos]),
+FORMAT_STRING = "0.0",
+VISIBLE = 1, DISPLAY_FOLDER = 'Indicadores';
+
+-- Mismo periodo del año anterior (funciona a nivel Año, Trimestre o Mes)
+CREATE MEMBER CURRENTCUBE.[Measures].[Turnos Año Anterior]
+ AS ([Measures].[Cantidad Turnos],
+     ParallelPeriod([Tiempo].[Calendario].[Año], 1, [Tiempo].[Calendario].CurrentMember)),
+FORMAT_STRING = "#,##0",
+VISIBLE = 1, DISPLAY_FOLDER = 'Indicadores';
+
+CREATE MEMBER CURRENTCUBE.[Measures].[Variacion Interanual]
+ AS IIF([Measures].[Turnos Año Anterior] = 0 OR [Measures].[Cantidad Turnos] = 0, NULL,
+        ([Measures].[Cantidad Turnos] - [Measures].[Turnos Año Anterior])
+        / [Measures].[Turnos Año Anterior]),
+FORMAT_STRING = "0.0%",
+VISIBLE = 1, DISPLAY_FOLDER = 'Indicadores';
+
+
+/* =====================================================================
+   PARTE B - KPIs (los "al menos 3 indicadores")
+   Visual Studio > Cubo > pestaña "KPIs" > boton "New KPI".
+   Completar cada campo con lo siguiente. Associated measure group: <All>
+   Status indicator: "Shapes" o "Traffic light". Trend indicator: "Standard arrow".
+   ===================================================================== */
+
+-- ---------------------------------------------------------------------
+-- KPI 1: Asistencia   (turnos atendidos / turnos cerrados)  MAYOR es mejor
+-- Objetivo: >= 75%   Verde >= 75% | Amarillo 65%-75% | Rojo < 65%
+-- ---------------------------------------------------------------------
+Name:   Asistencia
+Value:  [Measures].[Tasa Asistencia]
+Goal:   0.75
+Status:
+CASE
+    WHEN IsEmpty(KPIValue("Asistencia")) THEN NULL
+    WHEN KPIValue("Asistencia") >= KPIGoal("Asistencia") THEN 1
+    WHEN KPIValue("Asistencia") >= 0.65 THEN 0
+    ELSE -1
+END
+Trend:
+CASE
+    WHEN IsEmpty(([Measures].[Tasa Asistencia], [Tiempo].[Calendario].CurrentMember.PrevMember)) THEN 0
+    WHEN KPIValue("Asistencia") > ([Measures].[Tasa Asistencia], [Tiempo].[Calendario].CurrentMember.PrevMember) THEN 1
+    WHEN KPIValue("Asistencia") < ([Measures].[Tasa Asistencia], [Tiempo].[Calendario].CurrentMember.PrevMember) THEN -1
+    ELSE 0
+END
+
+-- ---------------------------------------------------------------------
+-- KPI 2: Ausentismo   (turnos ausentes / turnos cerrados)  MENOR es mejor
+-- Objetivo: <= 10%   Verde <= 10% | Amarillo 10%-15% | Rojo > 15%
+-- ---------------------------------------------------------------------
+Name:   Ausentismo
+Value:  [Measures].[Tasa Ausentismo]
+Goal:   0.10
+Status:
+CASE
+    WHEN IsEmpty(KPIValue("Ausentismo")) THEN NULL
+    WHEN KPIValue("Ausentismo") <= KPIGoal("Ausentismo") THEN 1
+    WHEN KPIValue("Ausentismo") <= 0.15 THEN 0
+    ELSE -1
+END
+Trend:   (bajar es bueno, por eso la flecha sube cuando el valor baja)
+CASE
+    WHEN IsEmpty(([Measures].[Tasa Ausentismo], [Tiempo].[Calendario].CurrentMember.PrevMember)) THEN 0
+    WHEN KPIValue("Ausentismo") < ([Measures].[Tasa Ausentismo], [Tiempo].[Calendario].CurrentMember.PrevMember) THEN 1
+    WHEN KPIValue("Ausentismo") > ([Measures].[Tasa Ausentismo], [Tiempo].[Calendario].CurrentMember.PrevMember) THEN -1
+    ELSE 0
+END
+
+-- ---------------------------------------------------------------------
+-- KPI 3: Cancelacion  (turnos cancelados / turnos cerrados)  MENOR es mejor
+-- Objetivo: <= 12%   Verde <= 12% | Amarillo 12%-18% | Rojo > 18%
+-- ---------------------------------------------------------------------
+Name:   Cancelacion
+Value:  [Measures].[Tasa Cancelacion]
+Goal:   0.12
+Status:
+CASE
+    WHEN IsEmpty(KPIValue("Cancelacion")) THEN NULL
+    WHEN KPIValue("Cancelacion") <= KPIGoal("Cancelacion") THEN 1
+    WHEN KPIValue("Cancelacion") <= 0.18 THEN 0
+    ELSE -1
+END
+
+-- ---------------------------------------------------------------------
+-- KPI 4 (extra): Crecimiento de la demanda (variacion interanual de turnos)
+-- Objetivo: >= +10%   Verde >= 10% | Amarillo 0%-10% | Rojo < 0%
+-- Usar a nivel Mes o Trimestre (2026 todavia no termino).
+-- ---------------------------------------------------------------------
+Name:   Crecimiento Demanda
+Value:  [Measures].[Variacion Interanual]
+Goal:   0.10
+Status:
+CASE
+    WHEN IsEmpty(KPIValue("Crecimiento Demanda")) THEN NULL
+    WHEN KPIValue("Crecimiento Demanda") >= KPIGoal("Crecimiento Demanda") THEN 1
+    WHEN KPIValue("Crecimiento Demanda") >= 0 THEN 0
+    ELSE -1
+END
+
+
+/* =====================================================================
+   PARTE C - CONSULTAS MDX DE PRUEBA
+   SSMS > Conectar a "Analysis Services" > servidor "localhost" >
+   click derecho en la base > New Query > MDX.  (o pestaña "Browser" en VS)
+   ===================================================================== */
+
+-- 1) Indicadores por año
+SELECT { [Measures].[Cantidad Turnos], [Measures].[Tasa Asistencia],
+         [Measures].[Tasa Ausentismo], [Measures].[Tasa Cancelacion] } ON COLUMNS,
+       [Tiempo].[Calendario].[Año].MEMBERS ON ROWS
+FROM [Clinica];
+
+-- 2) Ausentismo por obra social (ordenado de peor a mejor)
+SELECT { [Measures].[Turnos Cerrados], [Measures].[Tasa Ausentismo] } ON COLUMNS,
+       ORDER([Paciente].[Obra Social].[Obra Social].MEMBERS,
+             [Measures].[Tasa Ausentismo], BDESC) ON ROWS
+FROM [Clinica];
+
+-- 3) Turnos por especialidad y estado en 2025
+SELECT [Estado].[Estado].[Estado].MEMBERS ON COLUMNS,
+       [Especialidad].[Especialidad].[Especialidad].MEMBERS ON ROWS
+FROM [Clinica]
+WHERE ([Tiempo].[Calendario].[Año].&[2025], [Measures].[Cantidad Turnos]);
+
+-- 4) Valor, objetivo y estado de los KPI
+SELECT { KPIValue("Ausentismo"), KPIGoal("Ausentismo"), KPIStatus("Ausentismo"),
+         KPIValue("Asistencia"), KPIGoal("Asistencia"), KPIStatus("Asistencia") } ON COLUMNS,
+       [Tiempo].[Calendario].[Año].MEMBERS ON ROWS
+FROM [Clinica];
