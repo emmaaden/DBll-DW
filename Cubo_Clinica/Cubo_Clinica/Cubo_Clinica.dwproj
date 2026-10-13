@@ -6,10 +6,75 @@
     <Name>Cubo_Clinica.database</Name>
     <FullPath>Cubo_Clinica.database</FullPath>
   </Database>
+  <Cubes>
+    <ProjectItem>
+      <Name>Clinica.cube</Name>
+      <FullPath>Clinica.cube</FullPath>
+      <Dependencies>
+        <ProjectItem>
+          <Name>Clinica.partitions</Name>
+          <FullPath>Clinica.partitions</FullPath>
+        </ProjectItem>
+      </Dependencies>
+    </ProjectItem>
+  </Cubes>
+  <Dimensions>
+    <ProjectItem>
+      <Name>Tiempo.dim</Name>
+      <FullPath>Tiempo.dim</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>Horario.dim</Name>
+      <FullPath>Horario.dim</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>Paciente.dim</Name>
+      <FullPath>Paciente.dim</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>Profesional.dim</Name>
+      <FullPath>Profesional.dim</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>Especialidad.dim</Name>
+      <FullPath>Especialidad.dim</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>Estado.dim</Name>
+      <FullPath>Estado.dim</FullPath>
+    </ProjectItem>
+  </Dimensions>
+  <DataSources>
+    <ProjectItem>
+      <Name>DW Clinica.ds</Name>
+      <FullPath>DW Clinica.ds</FullPath>
+    </ProjectItem>
+  </DataSources>
+  <DataSourceViews>
+    <ProjectItem>
+      <Name>DW Clinica.dsv</Name>
+      <FullPath>DW Clinica.dsv</FullPath>
+    </ProjectItem>
+  </DataSourceViews>
   <Configurations>
     <Configuration>
       <Name>Development</Name>
-      <Options />
+      <Options>
+        <ConnectionMappings>
+          <ConfigurationSetting>
+            <Id>DW Clinica</Id>
+            <Name>DW Clinica</Name>
+            <Value xsi:type="xsd:string">Provider=MSOLEDBSQL.1;Data Source=localhost;Integrated Security=SSPI;Initial Catalog=DW_Clinica</Value>
+          </ConfigurationSetting>
+        </ConnectionMappings>
+        <ConnectionSecurityMappings>
+          <ConfigurationSetting>
+            <Id>DW Clinica</Id>
+            <Name>DW Clinica</Name>
+            <Value xsi:type="xsd:int">0</Value>
+          </ConfigurationSetting>
+        </ConnectionSecurityMappings>
+      </Options>
     </Configuration>
   </Configurations>
 </Project>

@@ -1,0 +1,96 @@
+﻿<DeploymentSnapshot xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ddl2="http://schemas.microsoft.com/analysisservices/2003/engine/2" xmlns:ddl2_2="http://schemas.microsoft.com/analysisservices/2003/engine/2/2" xmlns:ddl100_100="http://schemas.microsoft.com/analysisservices/2008/engine/100/100" xmlns:ddl200="http://schemas.microsoft.com/analysisservices/2010/engine/200" xmlns:ddl200_200="http://schemas.microsoft.com/analysisservices/2010/engine/200/200" xmlns:ddl300="http://schemas.microsoft.com/analysisservices/2011/engine/300" xmlns:ddl300_300="http://schemas.microsoft.com/analysisservices/2011/engine/300/300" xmlns:ddl400="http://schemas.microsoft.com/analysisservices/2012/engine/400" xmlns:ddl400_400="http://schemas.microsoft.com/analysisservices/2012/engine/400/400" xmlns:ddl500="http://schemas.microsoft.com/analysisservices/2013/engine/500" xmlns:ddl500_500="http://schemas.microsoft.com/analysisservices/2013/engine/500/500" xmlns:dwd="http://schemas.microsoft.com/DataWarehouse/Designer/1.0">
+  <Target>
+    <Database>Cubo_Clinica</Database>
+    <Server>localhost</Server>
+    <ConnectionString>Data Source=localhost;Timeout=0</ConnectionString>
+  </Target>
+  <Options>
+    <TransactionalDeployment>false</TransactionalDeployment>
+    <PartitionDeployment>DeployPartitions</PartitionDeployment>
+    <RoleDeployment>DeployRolesRetainMembers</RoleDeployment>
+    <ProcessingOption>Default</ProcessingOption>
+    <OutputScript></OutputScript>
+    <ImpactAnalysisFile></ImpactAnalysisFile>
+    <ConfigurationSettingsDeployment>Deploy</ConfigurationSettingsDeployment>
+    <OptimizationSettingsDeployment>Deploy</OptimizationSettingsDeployment>
+    <WriteBackTableCreation>UseExisting</WriteBackTableCreation>
+  </Options>
+  <Snapshot>
+    <ObjectSnapshots>
+      <ObjectSnapshot>
+        <Type>Microsoft.AnalysisServices.RelationalDataSource</Type>
+        <TimeStamp>2jVxSzGCNQXSOGIiu9lk3N41gxQ=9/10/2026 16:56:119/10/2026 16:19:57</TimeStamp>
+        <ID>
+          <String>DW Clinica</String>
+        </ID>
+      </ObjectSnapshot>
+      <ObjectSnapshot>
+        <Type>Microsoft.AnalysisServices.DataSourceView</Type>
+        <TimeStamp>dBvpvR3onHCbssYSoeoUs+OJYPE=9/10/2026 16:20:379/10/2026 16:20:36</TimeStamp>
+        <ID>
+          <String>DW Clinica</String>
+        </ID>
+      </ObjectSnapshot>
+      <ObjectSnapshot>
+        <Type>Microsoft.AnalysisServices.Dimension</Type>
+        <TimeStamp>kZxVoABpHm1vb6k09uFJ8hHH9gw=9/10/2026 16:42:369/10/2026 16:22:20</TimeStamp>
+        <ID>
+          <String>Tiempo</String>
+        </ID>
+      </ObjectSnapshot>
+      <ObjectSnapshot>
+        <Type>Microsoft.AnalysisServices.Dimension</Type>
+        <TimeStamp>cCXZ0N1rqUEDnntzgZOAEDBSQQk=9/10/2026 16:22:509/10/2026 16:22:50</TimeStamp>
+        <ID>
+          <String>Horario</String>
+        </ID>
+      </ObjectSnapshot>
+      <ObjectSnapshot>
+        <Type>Microsoft.AnalysisServices.Dimension</Type>
+        <TimeStamp>JnpUa0JrEaMZnRrLfl7K7BE4Oio=9/10/2026 16:31:049/10/2026 16:23:42</TimeStamp>
+        <ID>
+          <String>Paciente</String>
+        </ID>
+      </ObjectSnapshot>
+      <ObjectSnapshot>
+        <Type>Microsoft.AnalysisServices.Dimension</Type>
+        <TimeStamp>x1QFPjLI2awIgyrwJrgfdQbxySY=9/10/2026 16:31:429/10/2026 16:24:02</TimeStamp>
+        <ID>
+          <String>Profesional</String>
+        </ID>
+      </ObjectSnapshot>
+      <ObjectSnapshot>
+        <Type>Microsoft.AnalysisServices.Dimension</Type>
+        <TimeStamp>/oA+agqH+sc+D8+x63ub6IDMCbw=9/10/2026 16:31:049/10/2026 16:24:34</TimeStamp>
+        <ID>
+          <String>Especialidad</String>
+        </ID>
+      </ObjectSnapshot>
+      <ObjectSnapshot>
+        <Type>Microsoft.AnalysisServices.Dimension</Type>
+        <TimeStamp>VzF5M4+U9YQ/OtlkpoyqJvfbVMI=9/10/2026 16:31:049/10/2026 16:24:53</TimeStamp>
+        <ID>
+          <String>Estado</String>
+        </ID>
+      </ObjectSnapshot>
+      <ObjectSnapshot>
+        <Type>Microsoft.AnalysisServices.Cube</Type>
+        <TimeStamp>80NMZ5htpjjdGI5q4ORBxrRQ1YM=9/10/2026 17:01:299/10/2026 16:42:36H52s2cIIOadMe2e9EkeCoyAd/fI=9/10/2026 16:42:369/10/2026 16:42:36</TimeStamp>
+        <ID>
+          <String>Clinica</String>
+        </ID>
+      </ObjectSnapshot>
+    </ObjectSnapshots>
+    <DatabaseSnapshot>
+      <Type>Microsoft.AnalysisServices.Database</Type>
+      <TimeStamp>2ox0p80hsh2h1UTj3QlxKys4lUE=9/10/2026 16:00:349/10/2026 16:00:34</TimeStamp>
+      <ID>
+        <String>Cubo_Clinica</String>
+      </ID>
+    </DatabaseSnapshot>
+    <Granularity>Coarse</Granularity>
+  </Snapshot>
+  <AssemblyLocations />
+  <ProcessingComplete>true</ProcessingComplete>
+  <LastDeployed>2026-10-09T20:01:37.906667Z</LastDeployed>
+</DeploymentSnapshot>

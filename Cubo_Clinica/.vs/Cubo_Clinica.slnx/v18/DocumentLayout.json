@@ -1,0 +1,36 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\emma2\\OneDrive\\Escritorio\\DBll-DW\\Cubo_Clinica\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{B1AE7A13-9774-9DF1-7EEB-26F8856D6DD3}|Cubo_Clinica\\Cubo_Clinica.dwproj|C:\\Users\\emma2\\OneDrive\\Escritorio\\DBll-DW\\Cubo_Clinica\\Cubo_Clinica\\Clinica.cube||{B4191D15-2D32-45F2-906F-E91BBAAA6059}|Design",
+      "RelativeMoniker": "D:0:0:{B1AE7A13-9774-9DF1-7EEB-26F8856D6DD3}|Cubo_Clinica\\Cubo_Clinica.dwproj|solutionrelative:Cubo_Clinica\\Clinica.cube||{B4191D15-2D32-45F2-906F-E91BBAAA6059}|Design"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Clinica.cube [Dise\u00F1o]",
+              "DocumentMoniker": "C:\\Users\\emma2\\OneDrive\\Escritorio\\DBll-DW\\Cubo_Clinica\\Cubo_Clinica\\Clinica.cube",
+              "RelativeDocumentMoniker": "Cubo_Clinica\\Clinica.cube",
+              "ToolTip": "C:\\Users\\emma2\\OneDrive\\Escritorio\\DBll-DW\\Cubo_Clinica\\Cubo_Clinica\\Clinica.cube [Dise\u00F1o]",
+              "RelativeToolTip": "Cubo_Clinica\\Clinica.cube [Dise\u00F1o]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-10-09T20:03:53.343Z",
+              "EditorCaption": " [Dise\u00F1o]"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
