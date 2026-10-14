@@ -75,7 +75,7 @@
       </ObjectSnapshot>
       <ObjectSnapshot>
         <Type>Microsoft.AnalysisServices.Cube</Type>
-        <TimeStamp>80NMZ5htpjjdGI5q4ORBxrRQ1YM=9/10/2026 17:01:299/10/2026 16:42:36H52s2cIIOadMe2e9EkeCoyAd/fI=9/10/2026 16:42:369/10/2026 16:42:36</TimeStamp>
+        <TimeStamp>VIwZRaQazGV3WJ6wMFI7+I+KlrI=14/10/2026 16:46:219/10/2026 16:42:36H52s2cIIOadMe2e9EkeCoyAd/fI=9/10/2026 16:42:369/10/2026 16:42:36</TimeStamp>
         <ID>
           <String>Clinica</String>
         </ID>
@@ -92,5 +92,5 @@
   </Snapshot>
   <AssemblyLocations />
   <ProcessingComplete>true</ProcessingComplete>
-  <LastDeployed>2026-10-09T20:01:37.906667Z</LastDeployed>
+  <LastDeployed>2026-10-14T19:46:38.803333Z</LastDeployed>
 </DeploymentSnapshot>
