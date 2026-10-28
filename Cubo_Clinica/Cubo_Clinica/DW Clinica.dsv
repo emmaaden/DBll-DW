@@ -110,13 +110,6 @@
                 <xs:sequence>
                   <xs:element name="sk_paciente" msdata:ReadOnly="true" msdata:AutoIncrement="true" msprop:FriendlyName="sk_paciente" msprop:DbColumnName="sk_paciente" msprop:design-time-name="c2fc4f4d-c13b-486f-b243-2df90708c769" type="xs:int" />
                   <xs:element name="id_paciente" msprop:FriendlyName="id_paciente" msprop:DbColumnName="id_paciente" msprop:design-time-name="36e0306d-a171-4349-a32b-b3863e5c2020" type="xs:int" />
-                  <xs:element name="dni" msprop:FriendlyName="dni" msprop:DbColumnName="dni" msprop:design-time-name="572ac610-96f7-4ede-a13e-f16da5748d34">
-                    <xs:simpleType>
-                      <xs:restriction base="xs:string">
-                        <xs:maxLength value="30" />
-                      </xs:restriction>
-                    </xs:simpleType>
-                  </xs:element>
                   <xs:element name="nombre_completo" msprop:FriendlyName="nombre_completo" msprop:DbColumnName="nombre_completo" msprop:design-time-name="08a4ad63-0287-43c0-ad60-133d33745a1d">
                     <xs:simpleType>
                       <xs:restriction base="xs:string">
@@ -162,13 +155,6 @@
                 <xs:sequence>
                   <xs:element name="sk_profesional" msdata:ReadOnly="true" msdata:AutoIncrement="true" msprop:FriendlyName="sk_profesional" msprop:DbColumnName="sk_profesional" msprop:design-time-name="fa8be159-b376-4b81-9dd2-e3ef9edc3676" type="xs:int" />
                   <xs:element name="id_profesional" msprop:FriendlyName="id_profesional" msprop:DbColumnName="id_profesional" msprop:design-time-name="8e427956-ab10-4d35-b723-e45e58725717" type="xs:int" />
-                  <xs:element name="dni" msprop:FriendlyName="dni" msprop:DbColumnName="dni" msprop:design-time-name="566ceef0-f6ba-4181-93e5-9e36185aad90">
-                    <xs:simpleType>
-                      <xs:restriction base="xs:string">
-                        <xs:maxLength value="30" />
-                      </xs:restriction>
-                    </xs:simpleType>
-                  </xs:element>
                   <xs:element name="nombre_completo" msprop:FriendlyName="nombre_completo" msprop:DbColumnName="nombre_completo" msprop:design-time-name="96a3c94e-2a56-47eb-9858-073bd6220d3a">
                     <xs:simpleType>
                       <xs:restriction base="xs:string">

@@ -30,7 +30,6 @@ BEGIN
         MERGE dbo.Dim_Paciente AS d
         USING (
             SELECT p.id,
-                   p.dni,
                    p.apellido + ', ' + p.nombre AS nombre_completo,
                    ISNULL(NULLIF(LTRIM(RTRIM(p.sexo)), ''), 'Sin dato') AS sexo,
                    p.fechaNacimiento,
@@ -51,25 +50,25 @@ BEGIN
         ) AS s
         ON d.id_paciente = s.id
         WHEN MATCHED THEN UPDATE SET
-            d.dni = s.dni, d.nombre_completo = s.nombre_completo, d.sexo = s.sexo,
+            d.nombre_completo = s.nombre_completo, d.sexo = s.sexo,
             d.fecha_nacimiento = s.fechaNacimiento, d.edad = s.edad, d.rango_etario = s.rango_etario,
             d.obra_social = s.obra_social, d.localidad = s.localidad
         WHEN NOT MATCHED BY TARGET THEN
-            INSERT (id_paciente, dni, nombre_completo, sexo, fecha_nacimiento, edad, rango_etario, obra_social, localidad)
-            VALUES (s.id, s.dni, s.nombre_completo, s.sexo, s.fechaNacimiento, s.edad, s.rango_etario, s.obra_social, s.localidad);
+            INSERT (id_paciente, nombre_completo, sexo, fecha_nacimiento, edad, rango_etario, obra_social, localidad)
+            VALUES (s.id, s.nombre_completo, s.sexo, s.fechaNacimiento, s.edad, s.rango_etario, s.obra_social, s.localidad);
 
         /* ---------- Dim_Profesional ---------- */
         MERGE dbo.Dim_Profesional AS d
         USING (
-            SELECT pr.ID, pr.dni, pr.apellido + ', ' + pr.nombre AS nombre_completo, pr.matricula
+            SELECT pr.ID, pr.apellido + ', ' + pr.nombre AS nombre_completo, pr.matricula
             FROM Clinica.dbo.Profesional pr
         ) AS s
         ON d.id_profesional = s.ID
         WHEN MATCHED THEN UPDATE SET
-            d.dni = s.dni, d.nombre_completo = s.nombre_completo, d.matricula = s.matricula
+            d.nombre_completo = s.nombre_completo, d.matricula = s.matricula
         WHEN NOT MATCHED BY TARGET THEN
-            INSERT (id_profesional, dni, nombre_completo, matricula)
-            VALUES (s.ID, s.dni, s.nombre_completo, s.matricula);
+            INSERT (id_profesional, nombre_completo, matricula)
+            VALUES (s.ID, s.nombre_completo, s.matricula);
 
         /* ---------- Dim_Especialidad ---------- */
         MERGE dbo.Dim_Especialidad AS d

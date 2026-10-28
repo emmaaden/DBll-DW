@@ -63,7 +63,6 @@ CREATE TABLE Dim_Horario (
 CREATE TABLE Dim_Paciente (
     sk_paciente       INT IDENTITY(1,1) PRIMARY KEY,
     id_paciente       INT          NOT NULL UNIQUE,        -- clave del sistema origen
-    dni               VARCHAR(30)  NOT NULL,
     nombre_completo   VARCHAR(255) NOT NULL,
     sexo              VARCHAR(20)  NOT NULL,
     fecha_nacimiento  DATE         NOT NULL,
@@ -76,7 +75,6 @@ CREATE TABLE Dim_Paciente (
 CREATE TABLE Dim_Profesional (
     sk_profesional   INT IDENTITY(1,1) PRIMARY KEY,
     id_profesional   INT          NOT NULL UNIQUE,
-    dni              VARCHAR(30)  NOT NULL,
     nombre_completo  VARCHAR(255) NOT NULL,
     matricula        VARCHAR(50)  NOT NULL
 );
