@@ -107,12 +107,12 @@ Es una práctica común en un DW. En el cubo y en Power BI los vacíos aparecen 
 Es el mismo `MERGE` tipo 1, más simple:
 
 - `nombre_completo` = "Apellido, Nombre"
-- `matricula` se copia tal cual
+- No se cargan otros datos del profesional (DNI, matrícula, contacto), porque no se usan para analizar los turnos.
 
 ```sql
 MERGE dbo.Dim_Profesional AS d
 USING (
-    SELECT pr.ID, pr.apellido + ', ' + pr.nombre AS nombre_completo, pr.matricula
+    SELECT pr.ID, pr.apellido + ', ' + pr.nombre AS nombre_completo
     FROM Clinica.dbo.Profesional pr
 ) AS s
 ON d.id_profesional = s.ID

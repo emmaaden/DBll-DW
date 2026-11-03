@@ -1,0 +1,1473 @@
+﻿<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="11/3/2026 5:40:59 PM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="DESKTOP-DFDG41Q"
+  DTS:CreatorName="DESKTOP-DFDG41Q\emma2"
+  DTS:Description="ETL Clinica -&gt; DW_Clinica: dimensiones con MERGE (SCD 1) y Fact_Turno con un flujo de datos"
+  DTS:DTSID="{08375AC3-45B8-4176-994C-FBCCF97EE68F}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="17.0.1016.0"
+  DTS:LocaleID="11274"
+  DTS:ObjectName="Carga_DW"
+  DTS:ProtectionLevel="0"
+  DTS:VersionBuild="1"
+  DTS:VersionGUID="{C7A9C65B-697D-4D87-A479-2D8249992A2C}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[Clinica (OLTP)]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{B56F557C-0241-4B14-AC24-7EF5ABBAD6C2}"
+      DTS:ObjectName="Clinica (OLTP)">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectRetryCount="1"
+          DTS:ConnectRetryInterval="5"
+          DTS:ConnectionString="Data Source=localhost;Initial Catalog=Clinica;Provider=MSOLEDBSQL.1;Integrated Security=SSPI;Trust Server Certificate=True;Auto Translate=False;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[DW_Clinica]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{F12E87DC-C46A-43D0-A428-B9290281C36A}"
+      DTS:ObjectName="DW_Clinica">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectRetryCount="1"
+          DTS:ConnectRetryInterval="5"
+          DTS:ConnectionString="Data Source=localhost;Initial Catalog=DW_Clinica;Provider=MSOLEDBSQL.1;Integrated Security=SSPI;Trust Server Certificate=True;Auto Translate=False;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:Variables />
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\Cargar Dim_Especialidad"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DTSID="{1612C1BA-03A7-49CC-A48B-9CB549664EC8}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Cargar Dim_Especialidad"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{F12E87DC-C46A-43D0-A428-B9290281C36A}"
+          SQLTask:SqlStatementSource="/* Dim_Especialidad: SCD tipo 1 */&#xA;MERGE dbo.Dim_Especialidad AS d&#xA;USING (SELECT id, nombre FROM Clinica.dbo.Especialidad) AS s&#xA;ON d.id_especialidad = s.id&#xA;WHEN MATCHED THEN UPDATE SET d.nombre_especialidad = s.nombre&#xA;WHEN NOT MATCHED BY TARGET THEN&#xA;    INSERT (id_especialidad, nombre_especialidad) VALUES (s.id, s.nombre);" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Cargar Dim_Paciente"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DTSID="{F27B82F2-A54D-45D1-B306-AEC103786784}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Cargar Dim_Paciente"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{F12E87DC-C46A-43D0-A428-B9290281C36A}"
+          SQLTask:SqlStatementSource="/* Dim_Paciente: SCD tipo 1 (inserta nuevos, actualiza cambios) */&#xA;DECLARE @Hoy DATE = CAST(GETDATE() AS DATE);&#xA;&#xA;MERGE dbo.Dim_Paciente AS d&#xA;USING (&#xA;    SELECT p.id,&#xA;           p.apellido + ', ' + p.nombre AS nombre_completo,&#xA;           ISNULL(NULLIF(LTRIM(RTRIM(p.sexo)), ''), 'Sin dato') AS sexo,&#xA;           p.fechaNacimiento,&#xA;           e.edad,&#xA;           CASE WHEN e.edad &lt;= 12 THEN '0-12 Niños'&#xA;                WHEN e.edad &lt;= 17 THEN '13-17 Adolescentes'&#xA;                WHEN e.edad &lt;= 35 THEN '18-35 Jóvenes'&#xA;                WHEN e.edad &lt;= 59 THEN '36-59 Adultos'&#xA;                ELSE '60+ Adultos mayores' END AS rango_etario,&#xA;           ISNULL(NULLIF(LTRIM(RTRIM(p.obra_social)), ''), 'Sin obra social') AS obra_social,&#xA;           CASE WHEN CHARINDEX(',', p.direccion) &gt; 0&#xA;                THEN LTRIM(RTRIM(SUBSTRING(p.direccion, CHARINDEX(',', p.direccion) + 1, 255)))&#xA;                ELSE 'Sin dato' END AS localidad&#xA;    FROM Clinica.dbo.Paciente p&#xA;    CROSS APPLY (SELECT DATEDIFF(YEAR, p.fechaNacimiento, @Hoy)&#xA;                      - CASE WHEN DATEADD(YEAR, DATEDIFF(YEAR, p.fechaNacimiento, @Hoy), p.fechaNacimiento) &gt; @Hoy&#xA;                             THEN 1 ELSE 0 END AS edad) e&#xA;) AS s&#xA;ON d.id_paciente = s.id&#xA;WHEN MATCHED THEN UPDATE SET&#xA;    d.nombre_completo = s.nombre_completo, d.sexo = s.sexo,&#xA;    d.fecha_nacimiento = s.fechaNacimiento, d.edad = s.edad, d.rango_etario = s.rango_etario,&#xA;    d.obra_social = s.obra_social, d.localidad = s.localidad&#xA;WHEN NOT MATCHED BY TARGET THEN&#xA;    INSERT (id_paciente, nombre_completo, sexo, fecha_nacimiento, edad, rango_etario, obra_social, localidad)&#xA;    VALUES (s.id, s.nombre_completo, s.sexo, s.fechaNacimiento, s.edad, s.rango_etario, s.obra_social, s.localidad);" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Cargar Dim_Profesional"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DTSID="{77F12FAF-615E-4C0E-A6D0-16119AB17A26}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Cargar Dim_Profesional"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{F12E87DC-C46A-43D0-A428-B9290281C36A}"
+          SQLTask:SqlStatementSource="/* Dim_Profesional: SCD tipo 1 */&#xA;MERGE dbo.Dim_Profesional AS d&#xA;USING (&#xA;    SELECT pr.ID, pr.apellido + ', ' + pr.nombre AS nombre_completo&#xA;    FROM Clinica.dbo.Profesional pr&#xA;) AS s&#xA;ON d.id_profesional = s.ID&#xA;WHEN MATCHED THEN UPDATE SET&#xA;    d.nombre_completo = s.nombre_completo&#xA;WHEN NOT MATCHED BY TARGET THEN&#xA;    INSERT (id_profesional, nombre_completo)&#xA;    VALUES (s.ID, s.nombre_completo);" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Cargar Fact_Turno"
+      DTS:CreationName="Microsoft.Pipeline"
+      DTS:Description="Lee los turnos del OLTP, busca las claves sustitutas en las dimensiones y carga Fact_Turno"
+      DTS:DTSID="{F525B551-74DA-460A-9620-C83AC760E51E}"
+      DTS:ExecutableType="Microsoft.Pipeline"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Cargar Fact_Turno"
+      DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <pipeline
+          version="1">
+          <components>
+            <component
+              refId="Package\Cargar Fact_Turno\Buscar sk_especialidad"
+              componentClassID="Microsoft.Lookup"
+              contactInfo="Lookup;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;6"
+              description="Busca la clave sustituta por id_especialidad. Si no la encuentra, el paquete falla (no se pierden turnos sin aviso)"
+              name="Buscar sk_especialidad"
+              usesDispositions="true"
+              version="6">
+              <properties>
+                <property
+                  dataType="System.String"
+                  description="Specifies the SQL statement that generates the lookup table."
+                  expressionType="Notify"
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=17.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91">SELECT id_especialidad, sk_especialidad FROM dbo.Dim_Especialidad</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies a SQL statement that uses parameters to generate the lookup table."
+                  expressionType="Notify"
+                  name="SqlCommandParam"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=17.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the type of connection used to access the reference dataset."
+                  name="ConnectionType"
+                  typeConverter="LookupConnectionType">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the cache type of the lookup table."
+                  name="CacheType"
+                  typeConverter="CacheType">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies how the Lookup transformation handles rows without matching entries in the reference data set."
+                  name="NoMatchBehavior"
+                  typeConverter="LookupNoMatchBehavior">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the percentage of the cache that is allocated for rows with no matching entries in the reference dataset."
+                  name="NoMatchCachePercentage">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Maximum Memory Usage for Reference Cache on a 32 bit platform."
+                  name="MaxMemoryUsage">25</property>
+                <property
+                  dataType="System.Int64"
+                  description="Maximum Memory Usage for Reference Cache on a 64 bit platform."
+                  name="MaxMemoryUsage64">25</property>
+                <property
+                  dataType="System.String"
+                  description="Indicates whether to reference metadata in an XML format."
+                  name="ReferenceMetadataXml">&lt;referenceMetadata&gt;&lt;referenceColumns&gt;&lt;referenceColumn name="id_especialidad" dataType="DT_I4" length="0" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="sk_especialidad" dataType="DT_I4" length="0" precision="0" scale="0" codePage="0"/&gt;&lt;/referenceColumns&gt;&lt;/referenceMetadata&gt;</property>
+                <property
+                  containsID="true"
+                  dataType="System.String"
+                  description="Specifies the list of lineage identifiers that map to the parameters that the SQL statement in the SQLCommand property uses. Entries in the list are separated by semicolons."
+                  name="ParameterMap"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Determines whether duplicate keys in the reference data should be treated as errors when full cache mode is used."
+                  name="TreatDuplicateKeysAsError">false</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\Cargar Fact_Turno\Buscar sk_especialidad.Connections[OleDbConnection]"
+                  connectionManagerID="Package.ConnectionManagers[DW_Clinica]"
+                  connectionManagerRefId="Package.ConnectionManagers[DW_Clinica]"
+                  description="Connection manager used to access lookup data."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\Cargar Fact_Turno\Buscar sk_especialidad.Inputs[Lookup Input]"
+                  name="Lookup Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\Cargar Fact_Turno\Buscar sk_especialidad.Inputs[Lookup Input].Columns[id_especialidad]"
+                      cachedDataType="i4"
+                      cachedName="id_especialidad"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[id_especialidad]">
+                      <properties>
+                        <property
+                          dataType="System.String"
+                          description="Specifies the column in the reference table that a column joins."
+                          name="JoinToReferenceColumn">id_especialidad</property>
+                        <property
+                          dataType="System.Null"
+                          description="Specifies the column in the reference table from which a column is copied."
+                          name="CopyFromReferenceColumn" />
+                      </properties>
+                    </inputColumn>
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\Cargar Fact_Turno\Buscar sk_especialidad.Outputs[Lookup Match Output]"
+                  errorOrTruncationOperation="Lookup"
+                  errorRowDisposition="FailComponent"
+                  exclusionGroup="1"
+                  name="Lookup Match Output"
+                  synchronousInputId="Package\Cargar Fact_Turno\Buscar sk_especialidad.Inputs[Lookup Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Buscar sk_especialidad.Outputs[Lookup Match Output].Columns[sk_especialidad]"
+                      dataType="i4"
+                      description="Clave sustituta de la dimension"
+                      errorOrTruncationOperation="Copy Column"
+                      lineageId="Package\Cargar Fact_Turno\Buscar sk_especialidad.Outputs[Lookup Match Output].Columns[sk_especialidad]"
+                      name="sk_especialidad"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.String"
+                          description="Specifies the column in the reference table from which a column is copied."
+                          name="CopyFromReferenceColumn">sk_especialidad</property>
+                      </properties>
+                    </outputColumn>
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\Cargar Fact_Turno\Buscar sk_especialidad.Outputs[Lookup No Match Output]"
+                  description="The Lookup output that handles rows with no matching entries in the reference dataset. Use this output when the NoMatchBehavior property is set to &quot;Send rows with no matching entries to the no match output.&quot;"
+                  exclusionGroup="1"
+                  name="Lookup No Match Output"
+                  synchronousInputId="Package\Cargar Fact_Turno\Buscar sk_especialidad.Inputs[Lookup Input]">
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\Cargar Fact_Turno\Buscar sk_especialidad.Outputs[Lookup Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Lookup Error Output"
+                  synchronousInputId="Package\Cargar Fact_Turno\Buscar sk_especialidad.Inputs[Lookup Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Buscar sk_especialidad.Outputs[Lookup Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Cargar Fact_Turno\Buscar sk_especialidad.Outputs[Lookup Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Buscar sk_especialidad.Outputs[Lookup Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Cargar Fact_Turno\Buscar sk_especialidad.Outputs[Lookup Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\Cargar Fact_Turno\Buscar sk_paciente"
+              componentClassID="Microsoft.Lookup"
+              contactInfo="Lookup;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;6"
+              description="Busca la clave sustituta por id_paciente. Si no la encuentra, el paquete falla (no se pierden turnos sin aviso)"
+              name="Buscar sk_paciente"
+              usesDispositions="true"
+              version="6">
+              <properties>
+                <property
+                  dataType="System.String"
+                  description="Specifies the SQL statement that generates the lookup table."
+                  expressionType="Notify"
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=17.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91">SELECT id_paciente, sk_paciente FROM dbo.Dim_Paciente</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies a SQL statement that uses parameters to generate the lookup table."
+                  expressionType="Notify"
+                  name="SqlCommandParam"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=17.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the type of connection used to access the reference dataset."
+                  name="ConnectionType"
+                  typeConverter="LookupConnectionType">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the cache type of the lookup table."
+                  name="CacheType"
+                  typeConverter="CacheType">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies how the Lookup transformation handles rows without matching entries in the reference data set."
+                  name="NoMatchBehavior"
+                  typeConverter="LookupNoMatchBehavior">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the percentage of the cache that is allocated for rows with no matching entries in the reference dataset."
+                  name="NoMatchCachePercentage">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Maximum Memory Usage for Reference Cache on a 32 bit platform."
+                  name="MaxMemoryUsage">25</property>
+                <property
+                  dataType="System.Int64"
+                  description="Maximum Memory Usage for Reference Cache on a 64 bit platform."
+                  name="MaxMemoryUsage64">25</property>
+                <property
+                  dataType="System.String"
+                  description="Indicates whether to reference metadata in an XML format."
+                  name="ReferenceMetadataXml">&lt;referenceMetadata&gt;&lt;referenceColumns&gt;&lt;referenceColumn name="id_paciente" dataType="DT_I4" length="0" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="sk_paciente" dataType="DT_I4" length="0" precision="0" scale="0" codePage="0"/&gt;&lt;/referenceColumns&gt;&lt;/referenceMetadata&gt;</property>
+                <property
+                  containsID="true"
+                  dataType="System.String"
+                  description="Specifies the list of lineage identifiers that map to the parameters that the SQL statement in the SQLCommand property uses. Entries in the list are separated by semicolons."
+                  name="ParameterMap"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Determines whether duplicate keys in the reference data should be treated as errors when full cache mode is used."
+                  name="TreatDuplicateKeysAsError">false</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\Cargar Fact_Turno\Buscar sk_paciente.Connections[OleDbConnection]"
+                  connectionManagerID="Package.ConnectionManagers[DW_Clinica]"
+                  connectionManagerRefId="Package.ConnectionManagers[DW_Clinica]"
+                  description="Connection manager used to access lookup data."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\Cargar Fact_Turno\Buscar sk_paciente.Inputs[Lookup Input]"
+                  name="Lookup Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\Cargar Fact_Turno\Buscar sk_paciente.Inputs[Lookup Input].Columns[id_paciente]"
+                      cachedDataType="i4"
+                      cachedName="id_paciente"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[id_paciente]">
+                      <properties>
+                        <property
+                          dataType="System.String"
+                          description="Specifies the column in the reference table that a column joins."
+                          name="JoinToReferenceColumn">id_paciente</property>
+                        <property
+                          dataType="System.Null"
+                          description="Specifies the column in the reference table from which a column is copied."
+                          name="CopyFromReferenceColumn" />
+                      </properties>
+                    </inputColumn>
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\Cargar Fact_Turno\Buscar sk_paciente.Outputs[Lookup Match Output]"
+                  errorOrTruncationOperation="Lookup"
+                  errorRowDisposition="FailComponent"
+                  exclusionGroup="1"
+                  name="Lookup Match Output"
+                  synchronousInputId="Package\Cargar Fact_Turno\Buscar sk_paciente.Inputs[Lookup Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Buscar sk_paciente.Outputs[Lookup Match Output].Columns[sk_paciente]"
+                      dataType="i4"
+                      description="Clave sustituta de la dimension"
+                      errorOrTruncationOperation="Copy Column"
+                      lineageId="Package\Cargar Fact_Turno\Buscar sk_paciente.Outputs[Lookup Match Output].Columns[sk_paciente]"
+                      name="sk_paciente"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.String"
+                          description="Specifies the column in the reference table from which a column is copied."
+                          name="CopyFromReferenceColumn">sk_paciente</property>
+                      </properties>
+                    </outputColumn>
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\Cargar Fact_Turno\Buscar sk_paciente.Outputs[Lookup No Match Output]"
+                  description="The Lookup output that handles rows with no matching entries in the reference dataset. Use this output when the NoMatchBehavior property is set to &quot;Send rows with no matching entries to the no match output.&quot;"
+                  exclusionGroup="1"
+                  name="Lookup No Match Output"
+                  synchronousInputId="Package\Cargar Fact_Turno\Buscar sk_paciente.Inputs[Lookup Input]">
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\Cargar Fact_Turno\Buscar sk_paciente.Outputs[Lookup Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Lookup Error Output"
+                  synchronousInputId="Package\Cargar Fact_Turno\Buscar sk_paciente.Inputs[Lookup Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Buscar sk_paciente.Outputs[Lookup Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Cargar Fact_Turno\Buscar sk_paciente.Outputs[Lookup Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Buscar sk_paciente.Outputs[Lookup Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Cargar Fact_Turno\Buscar sk_paciente.Outputs[Lookup Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\Cargar Fact_Turno\Buscar sk_profesional"
+              componentClassID="Microsoft.Lookup"
+              contactInfo="Lookup;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;6"
+              description="Busca la clave sustituta por id_profesional. Si no la encuentra, el paquete falla (no se pierden turnos sin aviso)"
+              name="Buscar sk_profesional"
+              usesDispositions="true"
+              version="6">
+              <properties>
+                <property
+                  dataType="System.String"
+                  description="Specifies the SQL statement that generates the lookup table."
+                  expressionType="Notify"
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=17.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91">SELECT id_profesional, sk_profesional FROM dbo.Dim_Profesional</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies a SQL statement that uses parameters to generate the lookup table."
+                  expressionType="Notify"
+                  name="SqlCommandParam"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=17.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the type of connection used to access the reference dataset."
+                  name="ConnectionType"
+                  typeConverter="LookupConnectionType">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the cache type of the lookup table."
+                  name="CacheType"
+                  typeConverter="CacheType">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies how the Lookup transformation handles rows without matching entries in the reference data set."
+                  name="NoMatchBehavior"
+                  typeConverter="LookupNoMatchBehavior">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the percentage of the cache that is allocated for rows with no matching entries in the reference dataset."
+                  name="NoMatchCachePercentage">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Maximum Memory Usage for Reference Cache on a 32 bit platform."
+                  name="MaxMemoryUsage">25</property>
+                <property
+                  dataType="System.Int64"
+                  description="Maximum Memory Usage for Reference Cache on a 64 bit platform."
+                  name="MaxMemoryUsage64">25</property>
+                <property
+                  dataType="System.String"
+                  description="Indicates whether to reference metadata in an XML format."
+                  name="ReferenceMetadataXml">&lt;referenceMetadata&gt;&lt;referenceColumns&gt;&lt;referenceColumn name="id_profesional" dataType="DT_I4" length="0" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="sk_profesional" dataType="DT_I4" length="0" precision="0" scale="0" codePage="0"/&gt;&lt;/referenceColumns&gt;&lt;/referenceMetadata&gt;</property>
+                <property
+                  containsID="true"
+                  dataType="System.String"
+                  description="Specifies the list of lineage identifiers that map to the parameters that the SQL statement in the SQLCommand property uses. Entries in the list are separated by semicolons."
+                  name="ParameterMap"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Determines whether duplicate keys in the reference data should be treated as errors when full cache mode is used."
+                  name="TreatDuplicateKeysAsError">false</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\Cargar Fact_Turno\Buscar sk_profesional.Connections[OleDbConnection]"
+                  connectionManagerID="Package.ConnectionManagers[DW_Clinica]"
+                  connectionManagerRefId="Package.ConnectionManagers[DW_Clinica]"
+                  description="Connection manager used to access lookup data."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\Cargar Fact_Turno\Buscar sk_profesional.Inputs[Lookup Input]"
+                  name="Lookup Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\Cargar Fact_Turno\Buscar sk_profesional.Inputs[Lookup Input].Columns[id_profesional]"
+                      cachedDataType="i4"
+                      cachedName="id_profesional"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[id_profesional]">
+                      <properties>
+                        <property
+                          dataType="System.String"
+                          description="Specifies the column in the reference table that a column joins."
+                          name="JoinToReferenceColumn">id_profesional</property>
+                        <property
+                          dataType="System.Null"
+                          description="Specifies the column in the reference table from which a column is copied."
+                          name="CopyFromReferenceColumn" />
+                      </properties>
+                    </inputColumn>
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\Cargar Fact_Turno\Buscar sk_profesional.Outputs[Lookup Match Output]"
+                  errorOrTruncationOperation="Lookup"
+                  errorRowDisposition="FailComponent"
+                  exclusionGroup="1"
+                  name="Lookup Match Output"
+                  synchronousInputId="Package\Cargar Fact_Turno\Buscar sk_profesional.Inputs[Lookup Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Buscar sk_profesional.Outputs[Lookup Match Output].Columns[sk_profesional]"
+                      dataType="i4"
+                      description="Clave sustituta de la dimension"
+                      errorOrTruncationOperation="Copy Column"
+                      lineageId="Package\Cargar Fact_Turno\Buscar sk_profesional.Outputs[Lookup Match Output].Columns[sk_profesional]"
+                      name="sk_profesional"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.String"
+                          description="Specifies the column in the reference table from which a column is copied."
+                          name="CopyFromReferenceColumn">sk_profesional</property>
+                      </properties>
+                    </outputColumn>
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\Cargar Fact_Turno\Buscar sk_profesional.Outputs[Lookup No Match Output]"
+                  description="The Lookup output that handles rows with no matching entries in the reference dataset. Use this output when the NoMatchBehavior property is set to &quot;Send rows with no matching entries to the no match output.&quot;"
+                  exclusionGroup="1"
+                  name="Lookup No Match Output"
+                  synchronousInputId="Package\Cargar Fact_Turno\Buscar sk_profesional.Inputs[Lookup Input]">
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\Cargar Fact_Turno\Buscar sk_profesional.Outputs[Lookup Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Lookup Error Output"
+                  synchronousInputId="Package\Cargar Fact_Turno\Buscar sk_profesional.Inputs[Lookup Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Buscar sk_profesional.Outputs[Lookup Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Cargar Fact_Turno\Buscar sk_profesional.Outputs[Lookup Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Buscar sk_profesional.Outputs[Lookup Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Cargar Fact_Turno\Buscar sk_profesional.Outputs[Lookup Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\Cargar Fact_Turno\Fact_Turno (DW)"
+              componentClassID="Microsoft.OLEDBDestination"
+              contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+              description="OLE DB Destination"
+              name="Fact_Turno (DW)"
+              usesDispositions="true"
+              version="4">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[dbo].[Fact_Turno]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=17.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">3</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepIdentity">false</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepNulls">false</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                  name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                  name="FastLoadMaxInsertCommitSize">2147483647</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\Cargar Fact_Turno\Fact_Turno (DW).Connections[OleDbConnection]"
+                  connectionManagerID="Package.ConnectionManagers[DW_Clinica]"
+                  connectionManagerRefId="Package.ConnectionManagers[DW_Clinica]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input]"
+                  errorOrTruncationOperation="Insert"
+                  errorRowDisposition="FailComponent"
+                  hasSideEffects="true"
+                  name="OLE DB Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].Columns[id_turno]"
+                      cachedDataType="i4"
+                      cachedName="id_turno"
+                      externalMetadataColumnId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].ExternalColumns[id_turno]"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[id_turno]" />
+                    <inputColumn
+                      refId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].Columns[sk_tiempo]"
+                      cachedDataType="i4"
+                      cachedName="sk_tiempo"
+                      externalMetadataColumnId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].ExternalColumns[sk_tiempo]"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[sk_tiempo]" />
+                    <inputColumn
+                      refId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].Columns[sk_horario]"
+                      cachedDataType="i4"
+                      cachedName="sk_horario"
+                      externalMetadataColumnId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].ExternalColumns[sk_horario]"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[sk_horario]" />
+                    <inputColumn
+                      refId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].Columns[sk_estado]"
+                      cachedDataType="i4"
+                      cachedName="sk_estado"
+                      externalMetadataColumnId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].ExternalColumns[sk_estado]"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[sk_estado]" />
+                    <inputColumn
+                      refId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].Columns[cantidad_turnos]"
+                      cachedDataType="i4"
+                      cachedName="cantidad_turnos"
+                      externalMetadataColumnId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].ExternalColumns[cantidad_turnos]"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[cantidad_turnos]" />
+                    <inputColumn
+                      refId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].Columns[turno_atendido]"
+                      cachedDataType="i4"
+                      cachedName="turno_atendido"
+                      externalMetadataColumnId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].ExternalColumns[turno_atendido]"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[turno_atendido]" />
+                    <inputColumn
+                      refId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].Columns[turno_cancelado]"
+                      cachedDataType="i4"
+                      cachedName="turno_cancelado"
+                      externalMetadataColumnId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].ExternalColumns[turno_cancelado]"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[turno_cancelado]" />
+                    <inputColumn
+                      refId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].Columns[turno_ausente]"
+                      cachedDataType="i4"
+                      cachedName="turno_ausente"
+                      externalMetadataColumnId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].ExternalColumns[turno_ausente]"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[turno_ausente]" />
+                    <inputColumn
+                      refId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].Columns[turno_pendiente]"
+                      cachedDataType="i4"
+                      cachedName="turno_pendiente"
+                      externalMetadataColumnId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].ExternalColumns[turno_pendiente]"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[turno_pendiente]" />
+                    <inputColumn
+                      refId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].Columns[edad_paciente]"
+                      cachedDataType="i4"
+                      cachedName="edad_paciente"
+                      externalMetadataColumnId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].ExternalColumns[edad_paciente]"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[edad_paciente]" />
+                    <inputColumn
+                      refId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].Columns[sk_paciente]"
+                      cachedDataType="i4"
+                      cachedName="sk_paciente"
+                      externalMetadataColumnId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].ExternalColumns[sk_paciente]"
+                      lineageId="Package\Cargar Fact_Turno\Buscar sk_paciente.Outputs[Lookup Match Output].Columns[sk_paciente]" />
+                    <inputColumn
+                      refId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].Columns[sk_profesional]"
+                      cachedDataType="i4"
+                      cachedName="sk_profesional"
+                      externalMetadataColumnId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].ExternalColumns[sk_profesional]"
+                      lineageId="Package\Cargar Fact_Turno\Buscar sk_profesional.Outputs[Lookup Match Output].Columns[sk_profesional]" />
+                    <inputColumn
+                      refId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].Columns[sk_especialidad]"
+                      cachedDataType="i4"
+                      cachedName="sk_especialidad"
+                      externalMetadataColumnId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].ExternalColumns[sk_especialidad]"
+                      lineageId="Package\Cargar Fact_Turno\Buscar sk_especialidad.Outputs[Lookup Match Output].Columns[sk_especialidad]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].ExternalColumns[id_turno]"
+                      dataType="i4"
+                      name="id_turno" />
+                    <externalMetadataColumn
+                      refId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].ExternalColumns[sk_tiempo]"
+                      dataType="i4"
+                      name="sk_tiempo" />
+                    <externalMetadataColumn
+                      refId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].ExternalColumns[sk_horario]"
+                      dataType="i4"
+                      name="sk_horario" />
+                    <externalMetadataColumn
+                      refId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].ExternalColumns[sk_paciente]"
+                      dataType="i4"
+                      name="sk_paciente" />
+                    <externalMetadataColumn
+                      refId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].ExternalColumns[sk_profesional]"
+                      dataType="i4"
+                      name="sk_profesional" />
+                    <externalMetadataColumn
+                      refId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].ExternalColumns[sk_especialidad]"
+                      dataType="i4"
+                      name="sk_especialidad" />
+                    <externalMetadataColumn
+                      refId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].ExternalColumns[sk_estado]"
+                      dataType="i4"
+                      name="sk_estado" />
+                    <externalMetadataColumn
+                      refId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].ExternalColumns[cantidad_turnos]"
+                      dataType="i4"
+                      name="cantidad_turnos" />
+                    <externalMetadataColumn
+                      refId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].ExternalColumns[turno_atendido]"
+                      dataType="i4"
+                      name="turno_atendido" />
+                    <externalMetadataColumn
+                      refId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].ExternalColumns[turno_cancelado]"
+                      dataType="i4"
+                      name="turno_cancelado" />
+                    <externalMetadataColumn
+                      refId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].ExternalColumns[turno_ausente]"
+                      dataType="i4"
+                      name="turno_ausente" />
+                    <externalMetadataColumn
+                      refId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].ExternalColumns[turno_pendiente]"
+                      dataType="i4"
+                      name="turno_pendiente" />
+                    <externalMetadataColumn
+                      refId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input].ExternalColumns[edad_paciente]"
+                      dataType="i4"
+                      name="edad_paciente" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\Cargar Fact_Turno\Fact_Turno (DW).Outputs[OLE DB Destination Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="OLE DB Destination Error Output"
+                  synchronousInputId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Fact_Turno (DW).Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Cargar Fact_Turno\Fact_Turno (DW).Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Fact_Turno (DW).Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Cargar Fact_Turno\Fact_Turno (DW).Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\Cargar Fact_Turno\Turnos (Clinica)"
+              componentClassID="Microsoft.OLEDBSource"
+              contactInfo="OLE DB Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;7"
+              description="Turnos del OLTP con la fecha y la hora ya convertidas a las claves de Tiempo y Horario"
+              name="Turnos (Clinica)"
+              usesDispositions="true"
+              version="7">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset"></property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=17.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91">SELECT t.id                                                         AS id_turno,
+       CONVERT(INT, CONVERT(CHAR(8), t.fecha, 112))                 AS sk_tiempo,      -- AAAAMMDD
+       DATEPART(HOUR, t.hora) * 100 + (DATEPART(MINUTE, t.hora) / 30) * 30 AS sk_horario, -- HHMM a 30'
+       t.id_paciente,
+       t.id_profesional,
+       t.id_especialidad,
+       t.estado                                                     AS sk_estado,
+       1                                                            AS cantidad_turnos,
+       CASE WHEN t.estado = 2 THEN 1 ELSE 0 END                     AS turno_atendido,
+       CASE WHEN t.estado = 3 THEN 1 ELSE 0 END                     AS turno_cancelado,
+       CASE WHEN t.estado = 4 THEN 1 ELSE 0 END                     AS turno_ausente,
+       CASE WHEN t.estado = 1 THEN 1 ELSE 0 END                     AS turno_pendiente,
+       DATEDIFF(YEAR, p.fechaNacimiento, t.fecha)
+         - CASE WHEN DATEADD(YEAR, DATEDIFF(YEAR, p.fechaNacimiento, t.fecha), p.fechaNacimiento) &gt; t.fecha
+                THEN 1 ELSE 0 END                                   AS edad_paciente
+FROM dbo.Turno t
+JOIN dbo.Paciente p ON p.id = t.id_paciente</property>
+                <property
+                  dataType="System.String"
+                  description="The variable that contains the SQL command to be executed."
+                  name="SqlCommandVariable"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">2</property>
+                <property
+                  dataType="System.String"
+                  description="The mappings between the parameters in the SQL command and variables."
+                  name="ParameterMapping"></property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\Cargar Fact_Turno\Turnos (Clinica).Connections[OleDbConnection]"
+                  connectionManagerID="Package.ConnectionManagers[Clinica (OLTP)]"
+                  connectionManagerRefId="Package.ConnectionManagers[Clinica (OLTP)]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <outputs>
+                <output
+                  refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output]"
+                  name="OLE DB Source Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[id_turno]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].ExternalColumns[id_turno]"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[id_turno]"
+                      name="id_turno"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[sk_tiempo]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].ExternalColumns[sk_tiempo]"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[sk_tiempo]"
+                      name="sk_tiempo"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[sk_horario]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].ExternalColumns[sk_horario]"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[sk_horario]"
+                      name="sk_horario"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[id_paciente]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].ExternalColumns[id_paciente]"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[id_paciente]"
+                      name="id_paciente"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[id_profesional]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].ExternalColumns[id_profesional]"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[id_profesional]"
+                      name="id_profesional"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[id_especialidad]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].ExternalColumns[id_especialidad]"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[id_especialidad]"
+                      name="id_especialidad"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[sk_estado]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].ExternalColumns[sk_estado]"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[sk_estado]"
+                      name="sk_estado"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[cantidad_turnos]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].ExternalColumns[cantidad_turnos]"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[cantidad_turnos]"
+                      name="cantidad_turnos"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[turno_atendido]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].ExternalColumns[turno_atendido]"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[turno_atendido]"
+                      name="turno_atendido"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[turno_cancelado]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].ExternalColumns[turno_cancelado]"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[turno_cancelado]"
+                      name="turno_cancelado"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[turno_ausente]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].ExternalColumns[turno_ausente]"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[turno_ausente]"
+                      name="turno_ausente"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[turno_pendiente]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].ExternalColumns[turno_pendiente]"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[turno_pendiente]"
+                      name="turno_pendiente"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[edad_paciente]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].ExternalColumns[edad_paciente]"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[edad_paciente]"
+                      name="edad_paciente"
+                      truncationRowDisposition="FailComponent" />
+                  </outputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].ExternalColumns[id_turno]"
+                      dataType="i4"
+                      name="id_turno" />
+                    <externalMetadataColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].ExternalColumns[sk_tiempo]"
+                      dataType="i4"
+                      name="sk_tiempo" />
+                    <externalMetadataColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].ExternalColumns[sk_horario]"
+                      dataType="i4"
+                      name="sk_horario" />
+                    <externalMetadataColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].ExternalColumns[id_paciente]"
+                      dataType="i4"
+                      name="id_paciente" />
+                    <externalMetadataColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].ExternalColumns[id_profesional]"
+                      dataType="i4"
+                      name="id_profesional" />
+                    <externalMetadataColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].ExternalColumns[id_especialidad]"
+                      dataType="i4"
+                      name="id_especialidad" />
+                    <externalMetadataColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].ExternalColumns[sk_estado]"
+                      dataType="i4"
+                      name="sk_estado" />
+                    <externalMetadataColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].ExternalColumns[cantidad_turnos]"
+                      dataType="i4"
+                      name="cantidad_turnos" />
+                    <externalMetadataColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].ExternalColumns[turno_atendido]"
+                      dataType="i4"
+                      name="turno_atendido" />
+                    <externalMetadataColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].ExternalColumns[turno_cancelado]"
+                      dataType="i4"
+                      name="turno_cancelado" />
+                    <externalMetadataColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].ExternalColumns[turno_ausente]"
+                      dataType="i4"
+                      name="turno_ausente" />
+                    <externalMetadataColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].ExternalColumns[turno_pendiente]"
+                      dataType="i4"
+                      name="turno_pendiente" />
+                    <externalMetadataColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].ExternalColumns[edad_paciente]"
+                      dataType="i4"
+                      name="edad_paciente" />
+                  </externalMetadataColumns>
+                </output>
+                <output
+                  refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Error Output]"
+                  isErrorOut="true"
+                  name="OLE DB Source Error Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Error Output].Columns[id_turno]"
+                      dataType="i4"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Error Output].Columns[id_turno]"
+                      name="id_turno" />
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Error Output].Columns[sk_tiempo]"
+                      dataType="i4"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Error Output].Columns[sk_tiempo]"
+                      name="sk_tiempo" />
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Error Output].Columns[sk_horario]"
+                      dataType="i4"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Error Output].Columns[sk_horario]"
+                      name="sk_horario" />
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Error Output].Columns[id_paciente]"
+                      dataType="i4"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Error Output].Columns[id_paciente]"
+                      name="id_paciente" />
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Error Output].Columns[id_profesional]"
+                      dataType="i4"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Error Output].Columns[id_profesional]"
+                      name="id_profesional" />
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Error Output].Columns[id_especialidad]"
+                      dataType="i4"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Error Output].Columns[id_especialidad]"
+                      name="id_especialidad" />
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Error Output].Columns[sk_estado]"
+                      dataType="i4"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Error Output].Columns[sk_estado]"
+                      name="sk_estado" />
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Error Output].Columns[cantidad_turnos]"
+                      dataType="i4"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Error Output].Columns[cantidad_turnos]"
+                      name="cantidad_turnos" />
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Error Output].Columns[turno_atendido]"
+                      dataType="i4"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Error Output].Columns[turno_atendido]"
+                      name="turno_atendido" />
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Error Output].Columns[turno_cancelado]"
+                      dataType="i4"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Error Output].Columns[turno_cancelado]"
+                      name="turno_cancelado" />
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Error Output].Columns[turno_ausente]"
+                      dataType="i4"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Error Output].Columns[turno_ausente]"
+                      name="turno_ausente" />
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Error Output].Columns[turno_pendiente]"
+                      dataType="i4"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Error Output].Columns[turno_pendiente]"
+                      name="turno_pendiente" />
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Error Output].Columns[edad_paciente]"
+                      dataType="i4"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Error Output].Columns[edad_paciente]"
+                      name="edad_paciente" />
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+          </components>
+          <paths>
+            <path
+              refId="Package\Cargar Fact_Turno.Paths[Lookup Match Output]"
+              endId="Package\Cargar Fact_Turno\Buscar sk_especialidad.Inputs[Lookup Input]"
+              name="Lookup Match Output"
+              startId="Package\Cargar Fact_Turno\Buscar sk_profesional.Outputs[Lookup Match Output]" />
+            <path
+              refId="Package\Cargar Fact_Turno.Paths[Lookup Match Output1]"
+              endId="Package\Cargar Fact_Turno\Fact_Turno (DW).Inputs[OLE DB Destination Input]"
+              name="Lookup Match Output"
+              startId="Package\Cargar Fact_Turno\Buscar sk_especialidad.Outputs[Lookup Match Output]" />
+            <path
+              refId="Package\Cargar Fact_Turno.Paths[Lookup Match Output2]"
+              endId="Package\Cargar Fact_Turno\Buscar sk_profesional.Inputs[Lookup Input]"
+              name="Lookup Match Output"
+              startId="Package\Cargar Fact_Turno\Buscar sk_paciente.Outputs[Lookup Match Output]" />
+            <path
+              refId="Package\Cargar Fact_Turno.Paths[OLE DB Source Output]"
+              endId="Package\Cargar Fact_Turno\Buscar sk_paciente.Inputs[Lookup Input]"
+              name="OLE DB Source Output"
+              startId="Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output]" />
+          </paths>
+        </pipeline>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Vaciar Fact_Turno"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DTSID="{43572A26-991E-4B02-9187-8D653E366337}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Vaciar Fact_Turno"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{F12E87DC-C46A-43D0-A428-B9290281C36A}"
+          SQLTask:SqlStatementSource="/* Recarga completa de los hechos: el estado de un turno cambia con el tiempo */&#xA;TRUNCATE TABLE dbo.Fact_Turno;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[{030A1BC1-C46A-4773-BCFC-2C943CE1DC2C\}]"
+      DTS:CreationName=""
+      DTS:DTSID="{030A1BC1-C46A-4773-BCFC-2C943CE1DC2C}"
+      DTS:From="Package\Vaciar Fact_Turno"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="{030A1BC1-C46A-4773-BCFC-2C943CE1DC2C}"
+      DTS:To="Package\Cargar Fact_Turno" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[{43F21274-0E65-447F-A9D1-ABCEEAEF5129\}]"
+      DTS:CreationName=""
+      DTS:DTSID="{43F21274-0E65-447F-A9D1-ABCEEAEF5129}"
+      DTS:From="Package\Cargar Dim_Paciente"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="{43F21274-0E65-447F-A9D1-ABCEEAEF5129}"
+      DTS:To="Package\Cargar Dim_Profesional" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[{EC8EFBC6-6BAD-45CB-9255-063E0AAFD5ED\}]"
+      DTS:CreationName=""
+      DTS:DTSID="{EC8EFBC6-6BAD-45CB-9255-063E0AAFD5ED}"
+      DTS:From="Package\Cargar Dim_Especialidad"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="{EC8EFBC6-6BAD-45CB-9255-063E0AAFD5ED}"
+      DTS:To="Package\Vaciar Fact_Turno" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[{EF9B3869-3DDB-48E7-8938-52CD79E7632A\}]"
+      DTS:CreationName=""
+      DTS:DTSID="{EF9B3869-3DDB-48E7-8938-52CD79E7632A}"
+      DTS:From="Package\Cargar Dim_Profesional"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="{EF9B3869-3DDB-48E7-8938-52CD79E7632A}"
+      DTS:To="Package\Cargar Dim_Especialidad" />
+  </DTS:PrecedenceConstraints>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--Esta sección CDATA contiene la información de diseño del paquete. Esta sección incluye información como, por ejemplo, las coordenadas (x,y), el ancho y el alto.-->
+<!--Si edita manualmente esta sección y comete un error, puede eliminarlo. -->
+<!--El paquete podrá cargarse normalmente, pero se perderá la información de diseño anterior y el diseñador reorganizará los elementos automáticamente en la superficie de diseño.-->
+<Objects
+  Version="8">
+  <!--Cada uno de los nodos siguientes contiene propiedades que no afectan al comportamiento en tiempo de ejecución.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="195,42"
+          Id="Package\Cargar Dim_Especialidad"
+          TopLeft="5.50000000000003,209.5" />
+        <NodeLayout
+          Size="178,42"
+          Id="Package\Cargar Dim_Paciente"
+          TopLeft="14,5.5" />
+        <NodeLayout
+          Size="189,42"
+          Id="Package\Cargar Dim_Profesional"
+          TopLeft="8.50000000000001,107.5" />
+        <NodeLayout
+          Size="167,42"
+          Id="Package\Cargar Fact_Turno"
+          TopLeft="19.5,413.5" />
+        <NodeLayout
+          Size="164,42"
+          Id="Package\Vaciar Fact_Turno"
+          TopLeft="21,311.5" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[{030A1BC1-C46A-4773-BCFC-2C943CE1DC2C\}]"
+          TopLeft="103,353.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60"
+              Start="0,0"
+              End="0,52.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[{43F21274-0E65-447F-A9D1-ABCEEAEF5129\}]"
+          TopLeft="103,47.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60"
+              Start="0,0"
+              End="0,52.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[{EC8EFBC6-6BAD-45CB-9255-063E0AAFD5ED\}]"
+          TopLeft="103,251.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60"
+              Start="0,0"
+              End="0,52.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[{EF9B3869-3DDB-48E7-8938-52CD79E7632A\}]"
+          TopLeft="103,149.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60"
+              Start="0,0"
+              End="0,52.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+  <TaskHost
+    design-time-name="Package\Cargar Fact_Turno">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        <NodeLayout
+          Size="169,42"
+          Id="Package\Cargar Fact_Turno\Buscar sk_paciente"
+          TopLeft="14.5,107.5" />
+        <NodeLayout
+          Size="161,42"
+          Id="Package\Cargar Fact_Turno\Fact_Turno (DW)"
+          TopLeft="18.5,413.5" />
+        <NodeLayout
+          Size="181,42"
+          Id="Package\Cargar Fact_Turno\Buscar sk_profesional"
+          TopLeft="8.50000000000003,209.5" />
+        <NodeLayout
+          Size="187,42"
+          Id="Package\Cargar Fact_Turno\Buscar sk_especialidad"
+          TopLeft="5.50000000000004,311.5" />
+        <NodeLayout
+          Size="153,42"
+          Id="Package\Cargar Fact_Turno\Turnos (Clinica)"
+          TopLeft="22.5,5.5" />
+        <EdgeLayout
+          Id="Package\Cargar Fact_Turno.Paths[Lookup Match Output]"
+          TopLeft="99,251.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60"
+              Start="0,0"
+              End="0,52.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-48.19138671875,20.4453125,96.3827734375,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Cargar Fact_Turno.Paths[OLE DB Source Output]"
+          TopLeft="99,47.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60"
+              Start="0,0"
+              End="0,52.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Cargar Fact_Turno.Paths[Lookup Match Output2]"
+          TopLeft="99,149.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60"
+              Start="0,0"
+              End="0,52.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-48.19138671875,20.4453125,96.3827734375,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Cargar Fact_Turno.Paths[Lookup Match Output1]"
+          TopLeft="99,353.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60"
+              Start="0,0"
+              End="0,52.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-48.19138671875,20.4453125,96.3827734375,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>

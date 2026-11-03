@@ -19,63 +19,63 @@
     <ObjectSnapshots>
       <ObjectSnapshot>
         <Type>Microsoft.AnalysisServices.RelationalDataSource</Type>
-        <TimeStamp>2jVxSzGCNQXSOGIiu9lk3N41gxQ=9/10/2026 16:56:119/10/2026 16:19:57</TimeStamp>
+        <TimeStamp>2jVxSzGCNQXSOGIiu9lk3N41gxQ=20/10/2026 09:56:1620/10/2026 09:56:16</TimeStamp>
         <ID>
           <String>DW Clinica</String>
         </ID>
       </ObjectSnapshot>
       <ObjectSnapshot>
         <Type>Microsoft.AnalysisServices.DataSourceView</Type>
-        <TimeStamp>dBvpvR3onHCbssYSoeoUs+OJYPE=9/10/2026 16:20:379/10/2026 16:20:36</TimeStamp>
+        <TimeStamp>9M/QrPvWg+ZIK9EKSFuWS0S0r1Y=3/11/2026 19:40:0420/10/2026 09:56:16</TimeStamp>
         <ID>
           <String>DW Clinica</String>
         </ID>
       </ObjectSnapshot>
       <ObjectSnapshot>
         <Type>Microsoft.AnalysisServices.Dimension</Type>
-        <TimeStamp>kZxVoABpHm1vb6k09uFJ8hHH9gw=9/10/2026 16:42:369/10/2026 16:22:20</TimeStamp>
+        <TimeStamp>1n2uQ1hez1z5kPMKMdvqxao7a6w=3/11/2026 20:18:153/11/2026 20:18:15</TimeStamp>
         <ID>
           <String>Tiempo</String>
         </ID>
       </ObjectSnapshot>
       <ObjectSnapshot>
         <Type>Microsoft.AnalysisServices.Dimension</Type>
-        <TimeStamp>cCXZ0N1rqUEDnntzgZOAEDBSQQk=9/10/2026 16:22:509/10/2026 16:22:50</TimeStamp>
+        <TimeStamp>cCXZ0N1rqUEDnntzgZOAEDBSQQk=20/10/2026 09:56:1620/10/2026 09:56:16</TimeStamp>
         <ID>
           <String>Horario</String>
         </ID>
       </ObjectSnapshot>
       <ObjectSnapshot>
         <Type>Microsoft.AnalysisServices.Dimension</Type>
-        <TimeStamp>JnpUa0JrEaMZnRrLfl7K7BE4Oio=9/10/2026 16:31:049/10/2026 16:23:42</TimeStamp>
+        <TimeStamp>JnpUa0JrEaMZnRrLfl7K7BE4Oio=20/10/2026 09:56:1620/10/2026 09:56:16</TimeStamp>
         <ID>
           <String>Paciente</String>
         </ID>
       </ObjectSnapshot>
       <ObjectSnapshot>
         <Type>Microsoft.AnalysisServices.Dimension</Type>
-        <TimeStamp>x1QFPjLI2awIgyrwJrgfdQbxySY=9/10/2026 16:31:429/10/2026 16:24:02</TimeStamp>
+        <TimeStamp>Q4JAQc/c9cg1wdRpwuoVRHzRZms=3/11/2026 17:23:1820/10/2026 09:56:16</TimeStamp>
         <ID>
           <String>Profesional</String>
         </ID>
       </ObjectSnapshot>
       <ObjectSnapshot>
         <Type>Microsoft.AnalysisServices.Dimension</Type>
-        <TimeStamp>/oA+agqH+sc+D8+x63ub6IDMCbw=9/10/2026 16:31:049/10/2026 16:24:34</TimeStamp>
+        <TimeStamp>/oA+agqH+sc+D8+x63ub6IDMCbw=20/10/2026 09:56:1620/10/2026 09:56:16</TimeStamp>
         <ID>
           <String>Especialidad</String>
         </ID>
       </ObjectSnapshot>
       <ObjectSnapshot>
         <Type>Microsoft.AnalysisServices.Dimension</Type>
-        <TimeStamp>VzF5M4+U9YQ/OtlkpoyqJvfbVMI=9/10/2026 16:31:049/10/2026 16:24:53</TimeStamp>
+        <TimeStamp>VzF5M4+U9YQ/OtlkpoyqJvfbVMI=20/10/2026 09:56:1620/10/2026 09:56:16</TimeStamp>
         <ID>
           <String>Estado</String>
         </ID>
       </ObjectSnapshot>
       <ObjectSnapshot>
         <Type>Microsoft.AnalysisServices.Cube</Type>
-        <TimeStamp>VIwZRaQazGV3WJ6wMFI7+I+KlrI=14/10/2026 16:46:219/10/2026 16:42:36H52s2cIIOadMe2e9EkeCoyAd/fI=9/10/2026 16:42:369/10/2026 16:42:36</TimeStamp>
+        <TimeStamp>g7tfLYjmiI8J6/o9eVo2HLwCyJU=3/11/2026 19:40:042/11/2026 20:21:08H52s2cIIOadMe2e9EkeCoyAd/fI=20/10/2026 09:56:1620/10/2026 09:56:16</TimeStamp>
         <ID>
           <String>Clinica</String>
         </ID>
@@ -83,7 +83,7 @@
     </ObjectSnapshots>
     <DatabaseSnapshot>
       <Type>Microsoft.AnalysisServices.Database</Type>
-      <TimeStamp>2ox0p80hsh2h1UTj3QlxKys4lUE=9/10/2026 16:00:349/10/2026 16:00:34</TimeStamp>
+      <TimeStamp>2ox0p80hsh2h1UTj3QlxKys4lUE=20/10/2026 09:56:1620/10/2026 09:56:16</TimeStamp>
       <ID>
         <String>Cubo_Clinica</String>
       </ID>
@@ -92,5 +92,5 @@
   </Snapshot>
   <AssemblyLocations />
   <ProcessingComplete>true</ProcessingComplete>
-  <LastDeployed>2026-10-14T19:46:38.803333Z</LastDeployed>
+  <LastDeployed>2026-11-03T23:18:44.986667Z</LastDeployed>
 </DeploymentSnapshot>

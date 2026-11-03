@@ -12,7 +12,7 @@ Guion para la defensa del TP de Base de Datos II. Dura unos 15 minutos. Cada blo
 - [ ] **No vuelvas a ejecutar el script 01** antes de presentar. Genera datos aleatorios (`NEWID()`), así que cambian todos los números de esta guía. Si lo ejecutás, después corré el 02, el 03 y reprocesá el cubo.
 - [ ] Cubo procesado: en Visual Studio, clic derecho en el proyecto > **Process** > *Process Full*.
 - [ ] Power BI abierto con `Clinica.pbix` y conexión en directo a `localhost` / `Cubo_Clinica`. Hacé clic en **Actualizar** para que tome los datos del cubo.
-- [ ] Abiertos en pestañas: SSMS (scripts 01, 02 y 03), Visual Studio (cubo), Power BI y el diagrama estrella (`Diagrama_Estrella.svg`).
+- [ ] Abiertos en pestañas: SSMS (scripts 01, 02 y 03), Visual Studio (cubo y `ETL_Clinica.sln`), Power BI y el diagrama estrella (`Diagrama_Estrella.svg`).
 
 ---
 
@@ -106,6 +106,22 @@ Clinica (OLTP)  --ETL-->  DW_Clinica (estrella)  -->  Cubo OLAP (SSAS)  -->  Pow
 
 **Mostrar en vivo (opcional):** la consulta de verificación del final del script 03, que da las tasas por año.
 
+### El ETL en Visual Studio (SSIS)
+
+**Mostrar:** `ETL_Clinica/ETL_Clinica.sln`, paquete `Carga_DW.dtsx`. Hacé clic en **Iniciar**: las tareas se ponen en verde en unos segundos. El registro de salida dice `wrote 9025 rows`.
+
+**Decir:**
+> "El mismo ETL también está como paquete de Integration Services. En el flujo de control se ven los pasos en orden: primero las tres dimensiones con MERGE, después se vacía el hecho y al final se carga con un flujo de datos. En ese flujo, tres Lookup cambian cada id del origen por su clave sustituta."
+
+| Pregunta | Respuesta |
+|---|---|
+| ¿Por qué tienen el ETL en SQL y en SSIS? | Hacen la misma carga y dan los mismos resultados. El paquete muestra el proceso de forma visual y el procedimiento sirve para correrlo rápido desde SSMS |
+| ¿Qué hace un Lookup? | Busca el id del origen en la dimensión y devuelve la clave sustituta (`sk_...`) |
+| ¿Qué pasa si un Lookup no encuentra la clave? | El paquete falla y avisa. Así ningún turno se pierde sin que nos enteremos |
+| ¿El paquete procesa el cubo? | No. Después de cargar hay que reprocesarlo desde Visual Studio o SSMS |
+
+> **Ojo:** ejecutalo desde Visual Studio, no con `DTExec`. Fuera de Visual Studio falla porque el SQL Server no tiene instalada la característica Integration Services, y para entonces `Fact_Turno` ya quedó vacía. Si pasa, corré `EXEC DW_Clinica.dbo.sp_Cargar_DW;`.
+
 ---
 
 ## 5. Cubo OLAP en Analysis Services (3 minutos)
@@ -117,7 +133,7 @@ Clinica (OLTP)  --ETL-->  DW_Clinica (estrella)  -->  Cubo OLAP (SSAS)  -->  Pow
 
 **Detalles técnicos:**
 - Los niveles usan claves que incluyen el año (`id_mes` = 202503, `id_trimestre` = 20251). Si se usara solo `mes`, marzo 2024 y marzo 2025 serían el mismo miembro y daría error de clave duplicada.
-- Las **relaciones de atributos** (Fecha → Mes → Trimestre → Semestre → Año) hacen que SSAS agregue bien y más rápido.
+- Las **relaciones de atributos** (Fecha → Mes → Trimestre → Semestre → Año) hacen que SSAS agregue bien y más rápido. También le permiten a Power BI calcular el año anterior por mes o trimestre. Las ves en `Tiempo.dim`, pestaña **Attribute Relationships**.
 
 **Medidas calculadas (MDX)**, en la carpeta *Indicadores*:
 
@@ -158,6 +174,10 @@ Asistencia y Ausentismo además tienen **tendencia** (flecha), que compara con e
 Recorré las visualizaciones: tarjetas con los KPIs, la evolución por mes, los turnos por especialidad, el ausentismo por obra social y los filtros (año, especialidad, obra social, sexo).
 
 **Si aparece 2027 vacío:** la dimensión Tiempo llega hasta 2027 pero no hay turnos ese año. Filtralo en el tablero.
+
+**Variación interanual:** se muestra por año o por mes. En una tarjeta sin período aparece `--`, porque sobre el total de todos los años no hay un año anterior con qué comparar.
+
+**Antes de hacer clic en una barra:** al seleccionarla se filtran los otros visuales de la página, y aparecen barras oscuras con valores parciales. Para quitar la selección, hacé clic en un espacio vacío del gráfico.
 
 ---
 
@@ -220,6 +240,9 @@ Está en una transacción con TRY/CATCH: hace ROLLBACK y el DW queda como estaba
 
 **12. ¿Para qué está la jerarquía Calendario?**
 Para hacer drill-down (año → trimestre → mes → día) y para funciones como `ParallelPeriod`, que necesitan saber qué es "el mismo período del año anterior".
+
+**12 bis. ¿Las relaciones de atributos convierten el modelo en copo de nieve?**
+No. El DW sigue siendo una estrella: Tiempo es una sola tabla desnormalizada. Las relaciones están en el cubo y solo le indican a Analysis Services cómo se ordena la jerarquía.
 
 **13. ¿Qué es un KPI en SSAS?**
 Un indicador con cuatro partes: valor, meta, estado (semáforo: 1, 0, −1) y tendencia (flecha). Se define en MDX dentro del cubo.

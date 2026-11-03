@@ -75,8 +75,7 @@ CREATE TABLE Dim_Paciente (
 CREATE TABLE Dim_Profesional (
     sk_profesional   INT IDENTITY(1,1) PRIMARY KEY,
     id_profesional   INT          NOT NULL UNIQUE,
-    nombre_completo  VARCHAR(255) NOT NULL,
-    matricula        VARCHAR(50)  NOT NULL
+    nombre_completo  VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE Dim_Especialidad (

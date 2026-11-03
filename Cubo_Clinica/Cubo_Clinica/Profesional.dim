@@ -99,29 +99,6 @@
           <ColumnID>nombre_completo</ColumnID>
         </Source>
       </NameColumn>
-      <AttributeRelationships>
-        <AttributeRelationship dwd:design-time-name="a05b6bc7-7047-494c-80e1-e28e513b8ef6">
-          <AttributeID>Matricula</AttributeID>
-          <Name>Matricula</Name>
-        </AttributeRelationship>
-      </AttributeRelationships>
-      <ddl200:ProcessingState>Unprocessed</ddl200:ProcessingState>
-      <ddl300:AttributeHierarchyProcessingState>Unprocessed</ddl300:AttributeHierarchyProcessingState>
-    </Attribute>
-    <Attribute dwd:design-time-name="3dfd9b51-d65e-4216-ba61-ff8bcd57f4f6">
-      <ID>Matricula</ID>
-      <Name>Matricula</Name>
-      <KeyColumns>
-        <KeyColumn dwd:design-time-name="5aa6dc50-d1b7-4b11-8fc7-41dd0988306b">
-          <DataType>WChar</DataType>
-          <DataSize>50</DataSize>
-          <Source xsi:type="ColumnBinding" dwd:design-time-name="2a8d0382-42c4-4bc9-bbd5-68882a4f4f7b">
-            <TableID>dbo_Dim_Profesional</TableID>
-            <ColumnID>matricula</ColumnID>
-          </Source>
-        </KeyColumn>
-      </KeyColumns>
-      <OrderBy>Key</OrderBy>
       <ddl200:ProcessingState>Unprocessed</ddl200:ProcessingState>
       <ddl300:AttributeHierarchyProcessingState>Unprocessed</ddl300:AttributeHierarchyProcessingState>
     </Attribute>

@@ -198,7 +198,7 @@ Una fila por día, del 01/01/2024 al 31/12/2027 (1.461 filas). **Se genera por s
 
 ### Dim\_Profesional
 
-`sk_profesional` (PK, IDENTITY), `id_profesional` (clave natural), `nombre_completo` y `matricula`.
+`sk_profesional` (PK, IDENTITY), `id_profesional` (clave natural) y `nombre_completo`. La matrícula, el DNI y los datos de contacto no se cargan porque no sirven para analizar los turnos.
 
 ### Dim\_Especialidad
 
@@ -320,7 +320,7 @@ Ejemplo: nació el 20/11/2000, hoy es 28/10/2026. `DATEDIFF` da 26, pero el 20/1
 
 El mismo patrón `MERGE` (SCD 1), más simple:
 
-- **Profesional:** `nombre_completo` = «Apellido, Nombre», `matricula` tal cual. Se compara por `id_profesional`.
+- **Profesional:** `nombre_completo` = «Apellido, Nombre». Se compara por `id_profesional`.
 - **Especialidad:** `nombre` → `nombre_especialidad`. Se compara por `id_especialidad`.
 
 Tiempo, Horario y Estado **no están en el ETL**: son dimensiones fijas que ya cargó el script 02 y no dependen de los datos de la clínica.

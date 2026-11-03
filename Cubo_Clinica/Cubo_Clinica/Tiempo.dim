@@ -88,19 +88,19 @@
               <Attributes>
                 <Attribute Id="Id Trimestre" />
               </Attributes>
-              <Position x="167" y="68" />
+              <Position x="314" y="20" />
             </Shape>
             <Shape Id="Id Semestre" Expanded="false">
               <Attributes>
                 <Attribute Id="Id Semestre" />
               </Attributes>
-              <Position x="167" y="116" />
+              <Position x="461" y="20" />
             </Shape>
             <Shape Id="Anio" Expanded="false">
               <Attributes>
                 <Attribute Id="Anio" />
               </Attributes>
-              <Position x="167" y="164" />
+              <Position x="608" y="20" />
             </Shape>
           </Shapes>
         </DiagramLayout>
@@ -141,18 +141,6 @@
         </Source>
       </NameColumn>
       <AttributeRelationships>
-        <AttributeRelationship dwd:design-time-name="3c1f3bbb-8e7e-49f2-9bd4-a14924e666c7">
-          <AttributeID>Anio</AttributeID>
-          <Name>Anio</Name>
-        </AttributeRelationship>
-        <AttributeRelationship dwd:design-time-name="5428efde-2730-4bcd-933f-e1ca12c3c5f7">
-          <AttributeID>Id Semestre</AttributeID>
-          <Name>Semestre</Name>
-        </AttributeRelationship>
-        <AttributeRelationship dwd:design-time-name="22040134-410d-4745-8691-3289e5e7234c">
-          <AttributeID>Id Trimestre</AttributeID>
-          <Name>Trimestre</Name>
-        </AttributeRelationship>
         <AttributeRelationship dwd:design-time-name="1556de98-8abe-444e-9193-e1ca4fcd0fc9">
           <AttributeID>Id Mes</AttributeID>
           <Name>Mes</Name>
@@ -212,6 +200,12 @@
           <ColumnID>semestre_desc</ColumnID>
         </Source>
       </NameColumn>
+      <AttributeRelationships>
+        <AttributeRelationship dwd:design-time-name="3c1f3bbb-8e7e-49f2-9bd4-a14924e666c7">
+          <AttributeID>Anio</AttributeID>
+          <Name>Anio</Name>
+        </AttributeRelationship>
+      </AttributeRelationships>
       <OrderBy>Key</OrderBy>
       <ddl200:ProcessingState>Unprocessed</ddl200:ProcessingState>
       <ddl300:AttributeHierarchyProcessingState>Unprocessed</ddl300:AttributeHierarchyProcessingState>
@@ -236,6 +230,12 @@
           <ColumnID>trimestre_desc</ColumnID>
         </Source>
       </NameColumn>
+      <AttributeRelationships>
+        <AttributeRelationship dwd:design-time-name="5428efde-2730-4bcd-933f-e1ca12c3c5f7">
+          <AttributeID>Id Semestre</AttributeID>
+          <Name>Semestre</Name>
+        </AttributeRelationship>
+      </AttributeRelationships>
       <OrderBy>Key</OrderBy>
       <ddl200:ProcessingState>Unprocessed</ddl200:ProcessingState>
       <ddl300:AttributeHierarchyProcessingState>Unprocessed</ddl300:AttributeHierarchyProcessingState>
@@ -260,6 +260,12 @@
           <ColumnID>mes_anio_desc</ColumnID>
         </Source>
       </NameColumn>
+      <AttributeRelationships>
+        <AttributeRelationship dwd:design-time-name="22040134-410d-4745-8691-3289e5e7234c">
+          <AttributeID>Id Trimestre</AttributeID>
+          <Name>Trimestre</Name>
+        </AttributeRelationship>
+      </AttributeRelationships>
       <OrderBy>Key</OrderBy>
       <ddl200:ProcessingState>Unprocessed</ddl200:ProcessingState>
       <ddl300:AttributeHierarchyProcessingState>Unprocessed</ddl300:AttributeHierarchyProcessingState>

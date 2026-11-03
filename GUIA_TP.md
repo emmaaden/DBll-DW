@@ -11,6 +11,7 @@
 | `01_OLTP_Clinica.sql` | Crea la base **Clinica** (según el DER) y la llena con datos de prueba |
 | `02_DW_Clinica_Estrella.sql` | Crea el Data Warehouse **DW_Clinica** con el **modelo estrella** |
 | `03_ETL_Carga_DW.sql` | Procedimiento `sp_Cargar_DW` que pasa los datos de Clinica al DW |
+| `ETL_Clinica/` | El mismo ETL como proyecto de **Integration Services** (SSIS) para Visual Studio: abrir `ETL_Clinica.sln` |
 | `04_Calculos_e_Indicadores_MDX.txt` | Medidas calculadas, **KPIs** y consultas MDX para el cubo |
 | `Diagrama_Estrella.drawio` | Diagrama estrella editable (abrir en https://app.diagrams.net) |
 | `Diagrama_Estrella.svg` | El mismo diagrama, para insertar en Word |
@@ -82,7 +83,7 @@ exportalo como PNG desde *Archivo > Exportar como*. El `.svg` se puede insertar 
 | `Dim_Tiempo` | `Turno.fecha` | Año > Semestre > Trimestre > Mes > Día, día de la semana |
 | `Dim_Horario` | `Turno.hora` | hora del día, franja (Mañana / Mediodía / Tarde) |
 | `Dim_Paciente` | `Paciente` | sexo, rango etario, obra social, localidad |
-| `Dim_Profesional` | `Profesional` | profesional, matrícula |
+| `Dim_Profesional` | `Profesional` | profesional |
 | `Dim_Especialidad` | `Especialidad` (el turno la trae en `Turno.id_especialidad`) | especialidad |
 | `Dim_Estado` | `Turno.estado` | Pendiente / Atendido / Cancelado / Ausente |
 
@@ -103,6 +104,24 @@ En SSMS ejecutá, en este orden:
    Esos números los vamos a usar después para comprobar que el cubo calcula bien.
 
 Para ver el diagrama dentro de SSMS: en `DW_Clinica` hacé click derecho en *Database Diagrams* > *New Database Diagram* y agregá todas las tablas.
+
+### El ETL en Visual Studio (SSIS)
+
+El proyecto `ETL_Clinica` hace la misma carga que `sp_Cargar_DW`, pero como paquete de Integration Services (`Carga_DW.dtsx`). Necesita la extensión **SQL Server Integration Services Projects 2022** de Visual Studio.
+
+**Flujo de control**, en este orden:
+1. `Cargar Dim_Paciente`, `Cargar Dim_Profesional` y `Cargar Dim_Especialidad`: tareas *Execute SQL* con un `MERGE` (SCD tipo 1).
+2. `Vaciar Fact_Turno`: `TRUNCATE`.
+3. `Cargar Fact_Turno`: flujo de datos.
+
+**Flujo de datos** de `Cargar Fact_Turno`:
+1. `Turnos (Clinica)`: lee los turnos y calcula las claves de Tiempo y Horario, los flags de estado y la edad.
+2. `Buscar sk_paciente`, `Buscar sk_profesional` y `Buscar sk_especialidad`: *Lookup* que cambian cada id del origen por la clave sustituta. Si no encuentran la clave, el paquete falla, así que ningún turno se pierde sin aviso.
+3. `Fact_Turno (DW)`: destino con carga rápida.
+
+**Para ejecutarlo:** abrí `ETL_Clinica/ETL_Clinica.sln`, abrí `Carga_DW.dtsx` y hacé clic en **Iniciar**. Después reprocesá el cubo.
+
+> El paquete corre dentro de Visual Studio. Con `DTExec`, fuera de Visual Studio, el flujo de datos falla si el SQL Server no tiene instalada la característica *Integration Services*. Además, las tareas anteriores ya vaciaron `Fact_Turno`: si pasa eso, ejecutá `EXEC DW_Clinica.dbo.sp_Cargar_DW;` para recuperar la carga.
 
 ---
 
@@ -129,7 +148,7 @@ Click derecho en **Dimensions** > *New Dimension* > *Use an existing table*. Rep
 | Dim_Tiempo | `sk_tiempo` | `fecha_desc` | **Tiempo** | anio, id_semestre, id_trimestre, id_mes, nombre_mes, nombre_dia |
 | Dim_Horario | `sk_horario` | `hora_desc` | **Horario** | hora_del_dia, franja_horaria |
 | Dim_Paciente | `sk_paciente` | `nombre_completo` | **Paciente** | sexo, rango_etario, obra_social, localidad |
-| Dim_Profesional | `sk_profesional` | `nombre_completo` | **Profesional** | matricula |
+| Dim_Profesional | `sk_profesional` | `nombre_completo` | **Profesional** | (ninguno) |
 | Dim_Especialidad | `sk_especialidad` | `nombre_especialidad` | **Especialidad** | (ninguno) |
 | Dim_Estado | `sk_estado` | `estado` | **Estado** | tipo_estado |
 
@@ -160,6 +179,7 @@ En la dimensión **Tiempo**:
 2. Arrastrá al panel **Hierarchies**, en este orden: Año, Semestre, Trimestre, Mes, Fecha. Renombrá la jerarquía a **Calendario**.
 3. Pestaña **Attribute Relationships**: tienen que quedar Fecha > Mes > Trimestre > Semestre > Año.
    Si no aparecen, click derecho > *New Attribute Relationship* y crealas. Esto evita el aviso del triángulo amarillo y mejora el rendimiento.
+   Además hace falta para Power BI: sin esta cadena, `Turnos Año Anterior` y `Variacion Interanual` quedan vacías por mes o trimestre. No agrega tablas al DW, así que el modelo sigue siendo estrella.
 4. (Opcional) En las propiedades de la dimensión poné `Type = Time`.
 
 Hacé lo mismo en **Horario** con una jerarquía `Franja > Hora` (atributo franja_horaria: KeyColumns `orden_franja`, NameColumn `franja_horaria`).
@@ -284,6 +304,8 @@ Igual, la consigna pide el cubo, así que lo ideal es conectarse al cubo (6.1).
 | *Cannot connect to localhost* al hacer Deploy | SSAS no está instalado o está en modo **Tabular**. Reinstalá la feature en modo Multidimensional. En `services.msc` revisá que *SQL Server Analysis Services* esté iniciado. |
 | *Attribute key cannot be found* al procesar | Reejecutá `sp_Cargar_DW` y procesá con *Process Full*. |
 | Error de clave duplicada en Mes/Trimestre | Revisá que KeyColumns sea `id_mes` / `id_trimestre` (que incluyen el año), no `mes`. |
+| `Turnos Año Anterior` vacía por mes en Power BI | Revisá las relaciones de atributos de Tiempo (Fecha > Mes > Trimestre > Semestre > Año), implementá el cubo y procesalo. |
+| `Variacion Interanual` muestra `--` en una tarjeta | Es lo esperado: sin año o mes no hay período anterior. Filtrá un año o mostrala por año o por mes. |
 | Error de sintaxis MDX "member not found" | Algún nombre no coincide (medida, dimensión o jerarquía). Revisá los nombres del paso 4.4 y 4.5. |
 | Acentos raros (Ã©) en los datos | Abrí el .sql en SSMS con *File > Open* (no copiar y pegar desde otro editor). |
 

@@ -59,15 +59,15 @@ BEGIN
         /* ---------- Dim_Profesional ---------- */
         MERGE dbo.Dim_Profesional AS d
         USING (
-            SELECT pr.ID, pr.apellido + ', ' + pr.nombre AS nombre_completo, pr.matricula
+            SELECT pr.ID, pr.apellido + ', ' + pr.nombre AS nombre_completo
             FROM Clinica.dbo.Profesional pr
         ) AS s
         ON d.id_profesional = s.ID
         WHEN MATCHED THEN UPDATE SET
-            d.nombre_completo = s.nombre_completo, d.matricula = s.matricula
+            d.nombre_completo = s.nombre_completo
         WHEN NOT MATCHED BY TARGET THEN
-            INSERT (id_profesional, nombre_completo, matricula)
-            VALUES (s.ID, s.nombre_completo, s.matricula);
+            INSERT (id_profesional, nombre_completo)
+            VALUES (s.ID, s.nombre_completo);
 
         /* ---------- Dim_Especialidad ---------- */
         MERGE dbo.Dim_Especialidad AS d

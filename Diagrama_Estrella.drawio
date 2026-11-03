@@ -164,7 +164,7 @@
           <mxGeometry height="22" width="260" y="206" as="geometry" />
         </mxCell>
         <mxCell id="profesional" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#1E293B;fontColor=#FFFFFF;strokeColor=#1E293B;swimlaneFillColor=#FFFFFF;rounded=1;arcSize=4;fontSize=14;" value="Dim_Profesional" vertex="1">
-          <mxGeometry height="124" width="260" x="900" y="320" as="geometry" />
+          <mxGeometry height="102" width="260" x="900" y="320" as="geometry" />
         </mxCell>
         <mxCell id="profesional_0" parent="profesional" style="text;html=1;align=left;verticalAlign=middle;spacingLeft=8;fontSize=12;fillColor=none;strokeColor=none;" value="&lt;b&gt;&lt;font color=&quot;#B45309&quot;&gt;PK&lt;/font&gt;&lt;/b&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;sk_profesional&lt;/b&gt; &lt;font color=&quot;#64748B&quot;&gt;: INT&lt;/font&gt;" vertex="1">
           <mxGeometry height="22" width="260" y="30" as="geometry" />
@@ -174,9 +174,6 @@
         </mxCell>
         <mxCell id="profesional_3" parent="profesional" style="text;html=1;align=left;verticalAlign=middle;spacingLeft=8;fontSize=12;fillColor=none;strokeColor=none;" value="&lt;b&gt;&lt;font color=&quot;#000000&quot;&gt;&lt;/font&gt;&lt;/b&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;nombre_completo &lt;font color=&quot;#64748B&quot;&gt;: VARCHAR(255)&lt;/font&gt;" vertex="1">
           <mxGeometry height="22" width="260" y="74" as="geometry" />
-        </mxCell>
-        <mxCell id="profesional_4" parent="profesional" style="text;html=1;align=left;verticalAlign=middle;spacingLeft=8;fontSize=12;fillColor=none;strokeColor=none;" value="&lt;b&gt;&lt;font color=&quot;#000000&quot;&gt;&lt;/font&gt;&lt;/b&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;matricula &lt;font color=&quot;#64748B&quot;&gt;: VARCHAR(50)&lt;/font&gt;" vertex="1">
-          <mxGeometry height="22" width="260" y="96" as="geometry" />
         </mxCell>
         <mxCell id="especialidad" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#1E293B;fontColor=#FFFFFF;strokeColor=#1E293B;swimlaneFillColor=#FFFFFF;rounded=1;arcSize=4;fontSize=14;" value="Dim_Especialidad" vertex="1">
           <mxGeometry height="102" width="260" x="900" y="500" as="geometry" />
