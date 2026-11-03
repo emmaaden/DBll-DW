@@ -1,6 +1,6 @@
 ﻿<Infos>
   <Item name="Paciente.dim">
-    <Time>639271602644353165</Time>
+    <Time>639280869760465748</Time>
     <Hash length="20">
       <b>38</b>
       <b>122</b>
@@ -24,58 +24,33 @@
       <b>42</b>
     </Hash>
   </Item>
-  <Item name="DW Clinica.ds">
-    <Time>639271617719207428</Time>
+  <Item name="Clinica.cube">
+    <Time>639292476681706604</Time>
     <Hash length="20">
-      <b>218</b>
-      <b>53</b>
-      <b>113</b>
-      <b>75</b>
-      <b>49</b>
-      <b>130</b>
-      <b>53</b>
-      <b>5</b>
-      <b>210</b>
-      <b>56</b>
-      <b>98</b>
+      <b>170</b>
+      <b>164</b>
+      <b>202</b>
+      <b>39</b>
+      <b>182</b>
+      <b>160</b>
+      <b>15</b>
+      <b>146</b>
       <b>34</b>
-      <b>187</b>
-      <b>217</b>
-      <b>100</b>
-      <b>220</b>
-      <b>222</b>
+      <b>117</b>
+      <b>215</b>
+      <b>90</b>
+      <b>242</b>
+      <b>244</b>
+      <b>146</b>
+      <b>221</b>
       <b>53</b>
-      <b>131</b>
-      <b>20</b>
-    </Hash>
-  </Item>
-  <Item name="DW Clinica.dsv">
-    <Time>639271596373653907</Time>
-    <Hash length="20">
-      <b>116</b>
-      <b>27</b>
-      <b>233</b>
-      <b>189</b>
-      <b>29</b>
-      <b>232</b>
-      <b>156</b>
-      <b>112</b>
+      <b>243</b>
       <b>155</b>
-      <b>178</b>
-      <b>198</b>
-      <b>18</b>
-      <b>161</b>
-      <b>234</b>
-      <b>20</b>
-      <b>179</b>
-      <b>227</b>
-      <b>137</b>
-      <b>96</b>
-      <b>241</b>
+      <b>65</b>
     </Hash>
   </Item>
   <Item name="Especialidad.dim">
-    <Time>639271602644482819</Time>
+    <Time>639280869760465748</Time>
     <Hash length="20">
       <b>254</b>
       <b>128</b>
@@ -100,7 +75,7 @@
     </Hash>
   </Item>
   <Item name="Estado.dim">
-    <Time>639271602644622441</Time>
+    <Time>639280869760465748</Time>
     <Hash length="20">
       <b>87</b>
       <b>49</b>
@@ -125,7 +100,7 @@
     </Hash>
   </Item>
   <Item name="Clinica.partitions">
-    <Time>639271609569628806</Time>
+    <Time>639280869760465748</Time>
     <Hash length="20">
       <b>31</b>
       <b>157</b>
@@ -150,7 +125,7 @@
     </Hash>
   </Item>
   <Item name="Profesional.dim">
-    <Time>639271603028329390</Time>
+    <Time>639280869760622092</Time>
     <Hash length="20">
       <b>199</b>
       <b>84</b>
@@ -174,33 +149,33 @@
       <b>38</b>
     </Hash>
   </Item>
-  <Item name="Tiempo.dim">
-    <Time>639271609569864014</Time>
+  <Item name="DW Clinica.ds">
+    <Time>639280869760465748</Time>
     <Hash length="20">
-      <b>145</b>
-      <b>156</b>
-      <b>85</b>
-      <b>160</b>
-      <b>0</b>
-      <b>105</b>
-      <b>30</b>
-      <b>109</b>
-      <b>111</b>
-      <b>111</b>
-      <b>169</b>
-      <b>52</b>
-      <b>246</b>
-      <b>225</b>
-      <b>73</b>
-      <b>242</b>
-      <b>17</b>
-      <b>199</b>
-      <b>246</b>
-      <b>12</b>
+      <b>218</b>
+      <b>53</b>
+      <b>113</b>
+      <b>75</b>
+      <b>49</b>
+      <b>130</b>
+      <b>53</b>
+      <b>5</b>
+      <b>210</b>
+      <b>56</b>
+      <b>98</b>
+      <b>34</b>
+      <b>187</b>
+      <b>217</b>
+      <b>100</b>
+      <b>220</b>
+      <b>222</b>
+      <b>53</b>
+      <b>131</b>
+      <b>20</b>
     </Hash>
   </Item>
   <Item name="Cubo_Clinica.database">
-    <Time>639271584349610418</Time>
+    <Time>639280869760465748</Time>
     <Hash length="20">
       <b>218</b>
       <b>140</b>
@@ -225,7 +200,7 @@
     </Hash>
   </Item>
   <Item name="Horario.dim">
-    <Time>639271597704974749</Time>
+    <Time>639280869760465748</Time>
     <Hash length="20">
       <b>112</b>
       <b>37</b>
@@ -249,29 +224,54 @@
       <b>9</b>
     </Hash>
   </Item>
-  <Item name="Clinica.cube">
-    <Time>639275931811375693</Time>
+  <Item name="Tiempo.dim">
+    <Time>639292476677856618</Time>
     <Hash length="20">
-      <b>84</b>
-      <b>140</b>
-      <b>25</b>
+      <b>7</b>
+      <b>60</b>
       <b>69</b>
-      <b>164</b>
-      <b>26</b>
-      <b>204</b>
-      <b>101</b>
-      <b>119</b>
-      <b>88</b>
-      <b>158</b>
-      <b>176</b>
-      <b>48</b>
-      <b>82</b>
-      <b>59</b>
-      <b>248</b>
-      <b>143</b>
-      <b>138</b>
+      <b>122</b>
+      <b>19</b>
+      <b>253</b>
+      <b>68</b>
+      <b>60</b>
+      <b>87</b>
+      <b>102</b>
+      <b>142</b>
+      <b>211</b>
+      <b>68</b>
+      <b>230</b>
+      <b>97</b>
+      <b>54</b>
+      <b>19</b>
+      <b>185</b>
+      <b>128</b>
+      <b>160</b>
+    </Hash>
+  </Item>
+  <Item name="DW Clinica.dsv">
+    <Time>639287712665574233</Time>
+    <Hash length="20">
+      <b>127</b>
+      <b>197</b>
+      <b>169</b>
+      <b>165</b>
+      <b>226</b>
+      <b>199</b>
+      <b>162</b>
+      <b>47</b>
       <b>150</b>
-      <b>178</b>
+      <b>251</b>
+      <b>91</b>
+      <b>191</b>
+      <b>186</b>
+      <b>193</b>
+      <b>59</b>
+      <b>226</b>
+      <b>90</b>
+      <b>29</b>
+      <b>241</b>
+      <b>170</b>
     </Hash>
   </Item>
 </Infos>

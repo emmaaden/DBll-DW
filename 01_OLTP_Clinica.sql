@@ -77,13 +77,18 @@ CREATE TABLE Horario_Profesional (
 );
 
 CREATE TABLE Turno (
-    id              INT IDENTITY(1,1) PRIMARY KEY,
-    id_paciente     INT  NOT NULL REFERENCES Paciente(id),
-    id_profesional  INT  NOT NULL REFERENCES Profesional(ID),
-    hora            TIME NOT NULL,
-    fecha           DATE NOT NULL,
-    estado          INT  NOT NULL,           -- 1 Pendiente, 2 Atendido, 3 Cancelado, 4 Ausente
-    descripcion     VARCHAR(255) NULL
+    id               INT IDENTITY(1,1) PRIMARY KEY,
+    id_paciente      INT  NOT NULL REFERENCES Paciente(id),
+    id_profesional   INT  NOT NULL REFERENCES Profesional(ID),
+    id_especialidad  INT  NOT NULL,          -- especialidad con la que se atiende el turno
+    hora             TIME NOT NULL,
+    fecha            DATE NOT NULL,
+    estado           INT  NOT NULL,          -- 1 Pendiente, 2 Atendido, 3 Cancelado, 4 Ausente
+    descripcion      VARCHAR(255) NULL,
+    -- FK compuesta: el profesional tiene que tener esa especialidad
+    CONSTRAINT FK_Turno_Especialidad_Profesional
+        FOREIGN KEY (id_especialidad, id_profesional)
+        REFERENCES Especialidad_Profesional (id_especialidad, id_profesional)
 );
 
 CREATE TABLE HistoriaClinica (
@@ -244,7 +249,8 @@ SELECT TOP (9500)
        CAST(FLOOR(156 * POWER(RAND(CHECKSUM(NEWID())), 0.7)) AS INT) AS semana,
        ABS(CHECKSUM(NEWID())) % 12       AS slot,
        ABS(CHECKSUM(NEWID())) % 100      AS r_estado,
-       ABS(CHECKSUM(NEWID())) % 5        AS r_desc
+       ABS(CHECKSUM(NEWID())) % 5        AS r_desc,
+       ABS(CHECKSUM(NEWID())) % 100      AS r_esp
 INTO #T
 FROM sys.all_objects a CROSS JOIN sys.all_objects b;
 
@@ -258,7 +264,7 @@ Base AS (   -- el turno cae en un dia y horario en que el profesional atiende
     SELECT t.id_paciente, t.id_profesional,
            DATEADD(DAY, t.semana * 7 + (h.dia_semana - 1), CAST('20240101' AS DATE)) AS fecha,
            DATEADD(MINUTE, 30 * (t.slot % h.cant_slots), h.hora_inicio)            AS hora,
-           t.r_estado, t.r_desc
+           t.r_estado, t.r_desc, t.r_esp
     FROM #T t
     JOIN H h ON h.id_profesional = t.id_profesional AND h.idx = t.idx_horario
 ),
@@ -269,14 +275,24 @@ SinDuplicados AS (  -- un solo turno por profesional / fecha / hora
 ),
 ConDatos AS (
     SELECT s.id_paciente, s.id_profesional, s.fecha, s.hora, s.r_estado, s.r_desc,
+           e.id_especialidad,
            p.obra_social,
            DATEDIFF(YEAR, p.fechaNacimiento, s.fecha) AS edad
     FROM SinDuplicados s
     JOIN Paciente p ON p.id = s.id_paciente
+    -- especialidad del turno: una de las que tiene el profesional
+    -- (si tiene dos, ~70% la primera y ~30% la segunda)
+    CROSS APPLY (SELECT ep.id_especialidad
+                 FROM (SELECT id_especialidad,
+                              ROW_NUMBER() OVER (ORDER BY id_especialidad) AS orden,
+                              COUNT(*) OVER () AS cant
+                       FROM Especialidad_Profesional
+                       WHERE id_profesional = s.id_profesional) ep
+                 WHERE ep.orden = CASE WHEN ep.cant = 1 OR s.r_esp < 70 THEN 1 ELSE 2 END) e
     WHERE s.rn = 1
 )
-INSERT INTO Turno (id_paciente, id_profesional, hora, fecha, estado, descripcion)
-SELECT c.id_paciente, c.id_profesional, c.hora, c.fecha,
+INSERT INTO Turno (id_paciente, id_profesional, id_especialidad, hora, fecha, estado, descripcion)
+SELECT c.id_paciente, c.id_profesional, c.id_especialidad, c.hora, c.fecha,
        CASE WHEN c.fecha > @Hoy                    THEN 1   -- futuro: Pendiente
             WHEN c.r_estado < u.umbral_aus         THEN 4   -- Ausente
             WHEN c.r_estado < u.umbral_aus + 12    THEN 3   -- Cancelado
@@ -326,17 +342,11 @@ INSERT INTO @Diag VALUES
  (10,0,'Dolor de muela','Caries','Arreglo dental'),
  (10,1,'Sangrado de encías','Gingivitis','Limpieza dental');
 
-;WITH EspPrincipal AS (
-    SELECT id_profesional, MIN(id_especialidad) AS id_especialidad
-    FROM Especialidad_Profesional
-    GROUP BY id_profesional
-)
 INSERT INTO Consulta (ID_HistoriaClinica, Sintomas, Tratamiento, Diagnostico, Fecha)
 SELECT hc.id, d.sintomas, d.tratamiento, d.diagnostico, t.fecha
 FROM Turno t
 JOIN HistoriaClinica hc ON hc.id_paciente = t.id_paciente
-JOIN EspPrincipal    ep ON ep.id_profesional = t.id_profesional
-JOIN @Diag           d  ON d.id_especialidad = ep.id_especialidad AND d.k = t.id % 2
+JOIN @Diag           d  ON d.id_especialidad = t.id_especialidad AND d.k = t.id % 2
 WHERE t.estado = 2
 ORDER BY t.fecha;
 
@@ -360,4 +370,14 @@ SELECT estado, COUNT(*) AS cantidad
 FROM Turno
 GROUP BY estado
 ORDER BY estado;
+
+-- Turnos de los profesionales con dos especialidades
+SELECT pr.apellido, e.nombre AS especialidad, COUNT(*) AS turnos
+FROM Turno t
+JOIN Profesional  pr ON pr.ID = t.id_profesional
+JOIN Especialidad e  ON e.id  = t.id_especialidad
+WHERE t.id_profesional IN (SELECT id_profesional FROM Especialidad_Profesional
+                           GROUP BY id_profesional HAVING COUNT(*) > 1)
+GROUP BY pr.apellido, e.nombre
+ORDER BY pr.apellido, turnos DESC;
 GO

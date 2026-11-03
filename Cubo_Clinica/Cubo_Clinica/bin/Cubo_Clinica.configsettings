@@ -12,9 +12,6 @@
     </DataSources>
     <Dimensions>
       <Dimension>
-        <ID>Tiempo</ID>
-      </Dimension>
-      <Dimension>
         <ID>Horario</ID>
       </Dimension>
       <Dimension>
@@ -28,6 +25,9 @@
       </Dimension>
       <Dimension>
         <ID>Estado</ID>
+      </Dimension>
+      <Dimension>
+        <ID>Tiempo</ID>
       </Dimension>
     </Dimensions>
     <Cubes>

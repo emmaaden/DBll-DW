@@ -623,8 +623,8 @@ VISIBLE = 1, DISPLAY_FOLDER = 'Indicadores';</Text>
     <Kpi dwd:design-time-name="d801c083-f92f-4cac-a8c5-e5e7ecdd9cb2">
       <ID>KPI 1</ID>
       <Name>Ausentismo</Name>
-      <Value>[Measures].[Tasa Cancelacion]</Value>
-      <Goal>0.12</Goal>
+      <Value>[Measures].[Tasa Ausentismo]</Value>
+      <Goal>0.10</Goal>
       <Status>CASE
     WHEN IsEmpty(KPIValue("Ausentismo")) THEN NULL
     WHEN KPIValue("Ausentismo") &lt;= KPIGoal("Ausentismo") THEN 1

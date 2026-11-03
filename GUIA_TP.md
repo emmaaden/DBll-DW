@@ -83,13 +83,13 @@ exportalo como PNG desde *Archivo > Exportar como*. El `.svg` se puede insertar 
 | `Dim_Horario` | `Turno.hora` | hora del día, franja (Mañana / Mediodía / Tarde) |
 | `Dim_Paciente` | `Paciente` | sexo, rango etario, obra social, localidad |
 | `Dim_Profesional` | `Profesional` | profesional, matrícula |
-| `Dim_Especialidad` | `Especialidad` (+ `Especialidad_Profesional`) | especialidad |
+| `Dim_Especialidad` | `Especialidad` (el turno la trae en `Turno.id_especialidad`) | especialidad |
 | `Dim_Estado` | `Turno.estado` | Pendiente / Atendido / Cancelado / Ausente |
 
 **Decisiones de diseño, para defender en la presentación:**
 - Las dimensiones usan **claves subrogadas** (`sk_...`) independientes de los ids del sistema origen, que se guardan aparte (`id_paciente`, etc.).
 - `Dim_Tiempo` y `Dim_Horario` se generan por script. No salen del sistema origen.
-- Un profesional puede tener **varias especialidades** (N:N en el DER), pero el turno no dice cuál. Por eso el ETL asigna la **especialidad principal** del profesional (la de menor id). Así el modelo queda como estrella pura, sin tabla puente.
+- Un profesional puede tener **varias especialidades** (N:N en el DER). Por eso el turno guarda **con qué especialidad se atendió** (`Turno.id_especialidad`, con FK compuesta a `Especialidad_Profesional` para que el profesional tenga sí o sí esa especialidad). El ETL la toma directo del turno y el modelo queda como estrella pura, sin tabla puente.
 - `HistoriaClinica` y `Consulta` **no forman parte** de esta estrella porque `Consulta` no tiene profesional ni turno. Si quisieran, podrían ser una segunda tabla de hechos (constelación).
 - Las dimensiones se cargan con **SCD tipo 1** (si cambia un dato se sobrescribe).
 
@@ -194,7 +194,7 @@ Dale a las medidas `FormatString = #,##0`.
 3. Pestaña **Browser** del cubo: arrastrá medidas y dimensiones para probar. En la pestaña **KPIs** > *Browser view* ves los semáforos.
 4. Compará con la consulta del final del script 03: las tasas por año tienen que dar igual.
 
-Para probar MDX: en SSMS conectate a **Analysis Services** `localhost` > base `Base de datos ll` > *New Query* > *MDX* y ejecutá la **PARTE C**.
+Para probar MDX: en SSMS conectate a **Analysis Services** `localhost` > base `Cubo_Clinica` > *New Query* > *MDX* y ejecutá la **PARTE C**.
 
 > Si cambian datos en `Clinica`: ejecutá `EXEC DW_Clinica.dbo.sp_Cargar_DW;` y después reprocesá el cubo (click derecho > *Process*).
 
@@ -232,7 +232,7 @@ Se pueden analizar **por cualquier dimensión**: por obra social, rango etario, 
 
 ### 6.1 Conectarse al cubo
 Power BI Desktop > *Obtener datos* > **Base de datos de SQL Server Analysis Services** >
-Servidor `localhost`, Base de datos `Base de datos ll` > **Conectar en directo** > elegí el cubo **Clinica**.
+Servidor `localhost`, Base de datos `Cubo_Clinica` > **Conectar en directo** > elegí el cubo **Clinica**.
 Vas a ver las medidas, la carpeta *Indicadores*, los KPIs y las dimensiones del cubo.
 
 ### 6.2 Diseño sugerido
@@ -293,6 +293,5 @@ Igual, la consigna pide el cubo, así que lo ideal es conectarse al cubo (6.1).
 
 - [ ] Informe (Word/PDF) con: introducción, DER, **diagrama estrella** y su explicación (paso 2), descripción del ETL, estructura del cubo (capturas de dimensiones, jerarquía Calendario, medidas), **indicadores** (tabla del paso 5), capturas del **tablero** y conclusiones (hallazgos del paso 5).
 - [ ] Scripts `.sql` (01, 02, 03).
-- [ ] Proyecto de Visual Studio (`Base de datos ll`: la carpeta `C:\Users\emma2\source\repos\Base de datos ll` completa en .zip).
-EPOSBASE DE DATOS LL` COMPLETA EN .ZIP).
+- [ ] Proyecto de Visual Studio (`Cubo_Clinica`: la carpeta `Cubo_Clinica` de este repositorio completa en .zip).
 - [ ] Archivo de Power BI (`.pbix`).

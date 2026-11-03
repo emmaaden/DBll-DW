@@ -7,9 +7,9 @@
    - Hechos:      recarga completa (el estado de un turno cambia con el
                   tiempo: Pendiente -> Atendido / Cancelado / Ausente)
 
-   Decision de diseño: un profesional puede tener varias especialidades
-   (relacion N:N) pero el turno no indica cual. Se toma la especialidad
-   PRINCIPAL del profesional = la de menor id en Especialidad_Profesional.
+   Especialidad del turno: un profesional puede tener varias especialidades
+   (relacion N:N), por eso el turno guarda con cual se atendio
+   (Turno.id_especialidad). El ETL la toma directo de ahi.
 
    Se puede volver a ejecutar cuantas veces se quiera.
    ===================================================================== */
@@ -17,10 +17,9 @@
 USE DW_Clinica;
 GO
 
-CREATE OR ALTER PROCEDURE dbo.sp_Cargar_DW
-AS
+CREATE OR ALTER PROCEDURE dbo.sp_Cargar_DW AS
 BEGIN
-    SET NOCOUNT ON;
+    /* SET NOCOUNT ON; */
     DECLARE @Hoy DATE = CAST(GETDATE() AS DATE);
 
     BEGIN TRY
@@ -81,11 +80,6 @@ BEGIN
         /* ---------- Fact_Turno ---------- */
         TRUNCATE TABLE dbo.Fact_Turno;
 
-        ;WITH EspPrincipal AS (
-            SELECT id_profesional, MIN(id_especialidad) AS id_especialidad
-            FROM Clinica.dbo.Especialidad_Profesional
-            GROUP BY id_profesional
-        )
         INSERT INTO dbo.Fact_Turno (id_turno, sk_tiempo, sk_horario, sk_paciente, sk_profesional,
                                     sk_especialidad, sk_estado, cantidad_turnos, turno_atendido,
                                     turno_cancelado, turno_ausente, turno_pendiente, edad_paciente)
@@ -107,8 +101,7 @@ BEGIN
         FROM Clinica.dbo.Turno t
         JOIN dbo.Dim_Paciente     dp  ON dp.id_paciente     = t.id_paciente
         JOIN dbo.Dim_Profesional  dpr ON dpr.id_profesional = t.id_profesional
-        JOIN EspPrincipal         ep  ON ep.id_profesional  = t.id_profesional
-        JOIN dbo.Dim_Especialidad de  ON de.id_especialidad = ep.id_especialidad;
+        JOIN dbo.Dim_Especialidad de  ON de.id_especialidad = t.id_especialidad;
 
         COMMIT TRANSACTION;
         PRINT 'Carga del DW finalizada correctamente.';
@@ -124,9 +117,9 @@ GO
 EXEC dbo.sp_Cargar_DW;
 GO
 
-/* ---------------------------------------------------------------------
+/* 
    VERIFICACION: filas por tabla y una consulta de ejemplo sobre la estrella
-   --------------------------------------------------------------------- */
+*/
 SELECT 'Dim_Paciente' AS tabla, COUNT(*) AS filas FROM dbo.Dim_Paciente
 UNION ALL SELECT 'Dim_Profesional',  COUNT(*) FROM dbo.Dim_Profesional
 UNION ALL SELECT 'Dim_Especialidad', COUNT(*) FROM dbo.Dim_Especialidad
