@@ -80,7 +80,7 @@ CREATE TABLE Turno (
     id               INT IDENTITY(1,1) PRIMARY KEY,
     id_paciente      INT  NOT NULL REFERENCES Paciente(id),
     id_profesional   INT  NOT NULL REFERENCES Profesional(ID),
-    id_especialidad  INT  NOT NULL,          -- especialidad con la que se atiende el turno
+    id_especialidad  INT  NOT NULL,          
     hora             TIME NOT NULL,
     fecha            DATE NOT NULL,
     estado           INT  NOT NULL,          -- 1 Pendiente, 2 Atendido, 3 Cancelado, 4 Ausente
@@ -107,10 +107,7 @@ CREATE TABLE Consulta (
 );
 GO
 
-/* ---------------------------------------------------------------------
-   2. DATOS DE PRUEBA
-   (todo en un solo lote porque usa variables de tabla)
-   --------------------------------------------------------------------- */
+/* Poblar DB */
 SET NOCOUNT ON;
 
 DECLARE @Hoy DATE = CAST(GETDATE() AS DATE);

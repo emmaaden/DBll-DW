@@ -12,8 +12,8 @@
   DTS:LocaleID="11274"
   DTS:ObjectName="Carga_DW"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="1"
-  DTS:VersionGUID="{C7A9C65B-697D-4D87-A479-2D8249992A2C}">
+  DTS:VersionBuild="10"
+  DTS:VersionGUID="{55168D1E-33B2-44DB-98E4-A6F65298EF57}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -281,7 +281,8 @@
                   description="Specifies a SQL statement that uses parameters to generate the lookup table."
                   expressionType="Notify"
                   name="SqlCommandParam"
-                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=17.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=17.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91">select * from (SELECT id_paciente, sk_paciente FROM dbo.Dim_Paciente) [refTable]
+where [refTable].[id_paciente] = ?</property>
                 <property
                   dataType="System.Int32"
                   description="Specifies the type of connection used to access the reference dataset."
@@ -317,7 +318,7 @@
                   containsID="true"
                   dataType="System.String"
                   description="Specifies the list of lineage identifiers that map to the parameters that the SQL statement in the SQLCommand property uses. Entries in the list are separated by semicolons."
-                  name="ParameterMap"></property>
+                  name="ParameterMap">#{Package\Cargar Fact_Turno\Turnos (Clinica).Outputs[OLE DB Source Output].Columns[id_paciente]};</property>
                 <property
                   dataType="System.Int32"
                   description="Specifies the column code page to use when code page information is unavailable from the data source."
@@ -1247,7 +1248,7 @@ JOIN dbo.Paciente p ON p.id = t.id_paciente</property>
         <NodeLayout
           Size="189,42"
           Id="Package\Cargar Dim_Profesional"
-          TopLeft="8.50000000000001,107.5" />
+          TopLeft="7.50000000000001,106.5" />
         <NodeLayout
           Size="167,42"
           Id="Package\Cargar Fact_Turno"
@@ -1280,18 +1281,18 @@ JOIN dbo.Paciente p ON p.id = t.id_paciente</property>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[{43F21274-0E65-447F-A9D1-ABCEEAEF5129\}]"
-          TopLeft="103,47.5">
+          TopLeft="102.5,47.5">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,60"
+              EndConnector="0,59"
               Start="0,0"
-              End="0,52.5">
+              End="0,51.5">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,52.5" />
+                    End="0,51.5" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -1324,18 +1325,18 @@ JOIN dbo.Paciente p ON p.id = t.id_paciente</property>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[{EF9B3869-3DDB-48E7-8938-52CD79E7632A\}]"
-          TopLeft="103,149.5">
+          TopLeft="102.5,148.5">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,60"
+              EndConnector="0,61"
               Start="0,0"
-              End="0,52.5">
+              End="0,53.5">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,52.5" />
+                    End="0,53.5" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -1469,5 +1470,49 @@ JOIN dbo.Paciente p ON p.id = t.id_paciente</property>
       </GraphLayout>
     </LayoutInfo>
   </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Cargar Fact_Turno\Buscar sk_paciente">
+    <Properties>
+      <Property>
+        <Name>OverwriteParamsSQLProp</Name>
+        <Value
+          type="q2:boolean">false</Value>
+      </Property>
+      <Property>
+        <Name>UsedTableName</Name>
+        <Value
+          type="q3:string"></Value>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q4:int">0</Value>
+      </Property>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\Cargar Fact_Turno\Turnos (Clinica)">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\Cargar Fact_Turno\Fact_Turno (DW)">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
 </Objects>]]></DTS:DesignTimeProperties>
 </DTS:Executable>

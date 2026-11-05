@@ -101,19 +101,19 @@
                   <Attributes>
                     <Attribute Id="Id Trimestre" />
                   </Attributes>
-                  <Position x="314" y="20" />
+                  <Position x="167" y="68" />
                 </Shape>
                 <Shape Id="Id Semestre" Expanded="false">
                   <Attributes>
                     <Attribute Id="Id Semestre" />
                   </Attributes>
-                  <Position x="461" y="20" />
+                  <Position x="167" y="116" />
                 </Shape>
                 <Shape Id="Anio" Expanded="false">
                   <Attributes>
                     <Attribute Id="Anio" />
                   </Attributes>
-                  <Position x="608" y="20" />
+                  <Position x="167" y="164" />
                 </Shape>
               </Shapes>
             </DiagramLayout>
@@ -154,6 +154,18 @@
             </Source>
           </NameColumn>
           <AttributeRelationships>
+            <AttributeRelationship>
+              <AttributeID>Anio</AttributeID>
+              <Name>Anio</Name>
+            </AttributeRelationship>
+            <AttributeRelationship>
+              <AttributeID>Id Semestre</AttributeID>
+              <Name>Semestre</Name>
+            </AttributeRelationship>
+            <AttributeRelationship>
+              <AttributeID>Id Trimestre</AttributeID>
+              <Name>Trimestre</Name>
+            </AttributeRelationship>
             <AttributeRelationship>
               <AttributeID>Id Mes</AttributeID>
               <Name>Mes</Name>
@@ -213,12 +225,6 @@
               <ColumnID>semestre_desc</ColumnID>
             </Source>
           </NameColumn>
-          <AttributeRelationships>
-            <AttributeRelationship>
-              <AttributeID>Anio</AttributeID>
-              <Name>Anio</Name>
-            </AttributeRelationship>
-          </AttributeRelationships>
           <OrderBy>Key</OrderBy>
           <ddl200:ProcessingState>Unprocessed</ddl200:ProcessingState>
           <ddl300:AttributeHierarchyProcessingState>Unprocessed</ddl300:AttributeHierarchyProcessingState>
@@ -243,12 +249,6 @@
               <ColumnID>trimestre_desc</ColumnID>
             </Source>
           </NameColumn>
-          <AttributeRelationships>
-            <AttributeRelationship>
-              <AttributeID>Id Semestre</AttributeID>
-              <Name>Semestre</Name>
-            </AttributeRelationship>
-          </AttributeRelationships>
           <OrderBy>Key</OrderBy>
           <ddl200:ProcessingState>Unprocessed</ddl200:ProcessingState>
           <ddl300:AttributeHierarchyProcessingState>Unprocessed</ddl300:AttributeHierarchyProcessingState>
@@ -273,12 +273,6 @@
               <ColumnID>mes_anio_desc</ColumnID>
             </Source>
           </NameColumn>
-          <AttributeRelationships>
-            <AttributeRelationship>
-              <AttributeID>Id Trimestre</AttributeID>
-              <Name>Trimestre</Name>
-            </AttributeRelationship>
-          </AttributeRelationships>
           <OrderBy>Key</OrderBy>
           <ddl200:ProcessingState>Unprocessed</ddl200:ProcessingState>
           <ddl300:AttributeHierarchyProcessingState>Unprocessed</ddl300:AttributeHierarchyProcessingState>
@@ -1040,9 +1034,9 @@
           <Name>http://schemas.microsoft.com/DataWarehouse/Designer/1.0:DiagramLayout</Name>
           <Value>
             <dds xmlns="">
-              <diagram fontclsid="{0BE35203-8F91-11CE-9DE3-00AA004BB851}" mouseiconclsid="{0BE35204-8F91-11CE-9DE3-00AA004BB851}" defaultlayout="MSDDS.Rectilinear" defaultlineroute="MSDDS.Rectilinear" version="7" nextobject="28" scale="100" pagebreakanchorx="0" pagebreakanchory="0" pagebreaksizex="0" pagebreaksizey="0" scrollleft="-4065" scrolltop="-1181" gridx="150" gridy="150" marginx="5000" marginy="5000" zoom="98" x="35586" y="17039" backcolor="2039583" defaultpersistence="2" PrintPageNumbersMode="3" PrintMarginTop="0" PrintMarginBottom="635" PrintMarginLeft="0" PrintMarginRight="0" marqueeselectionmode="0" mousepointer="0" snaptogrid="0" autotypeannotation="1" showscrollbars="1" viewpagebreaks="0" donotforceconnectorsbehindshapes="1" backpictureclsid="{00000000-0000-0000-0000-000000000000}">
+              <diagram fontclsid="{0BE35203-8F91-11CE-9DE3-00AA004BB851}" mouseiconclsid="{0BE35204-8F91-11CE-9DE3-00AA004BB851}" defaultlayout="MSDDS.Rectilinear" defaultlineroute="MSDDS.Rectilinear" version="7" nextobject="28" scale="100" pagebreakanchorx="0" pagebreakanchory="0" pagebreaksizex="0" pagebreaksizey="0" scrollleft="-4065" scrolltop="-1181" gridx="150" gridy="150" marginx="5000" marginy="5000" zoom="98" x="10398" y="11748" backcolor="2039583" defaultpersistence="2" PrintPageNumbersMode="3" PrintMarginTop="0" PrintMarginBottom="635" PrintMarginLeft="0" PrintMarginRight="0" marqueeselectionmode="0" mousepointer="0" snaptogrid="0" autotypeannotation="1" showscrollbars="1" viewpagebreaks="0" donotforceconnectorsbehindshapes="1" backpictureclsid="{00000000-0000-0000-0000-000000000000}">
                 <font>
-                  <ddsxmlobjectstreamwrapper binary="01000000900144420100065461686f6d61" />
+                  <ddsxmlobjectstreamwrapper binary="01000000900144420100144d6963726f736f66742053616e73205365726966" />
                 </font>
                 <mouseicon>
                   <ddsxmlobjectstreamwrapper binary="6c74000000000000" />
@@ -1991,7 +1985,7 @@ END</Status>
                       </connector>
                     </ddscontrol>
                   </dds>
-                </DiagramLayout>
+</DiagramLayout>
                 <ShowRelationshipNames>False</ShowRelationshipNames>
                 <UseDiagramDefaultLayout>True</UseDiagramDefaultLayout>
                 <DiagramViewPortLeft>-8673</DiagramViewPortLeft>
@@ -2244,29 +2238,29 @@ END</Status>
               <xs:selector xpath=".//dbo_Fact_Turno" />
               <xs:field xpath="id_turno" />
             </xs:unique>
-            <xs:keyref name="FK__Fact_Turn__sk_ho__46E78A0C" refer="dbo_Dim_Horario_Constraint1">
+            <xs:keyref name="FK__Fact_Turn__sk_es__49C3F6B7" refer="Constraint1">
               <xs:selector xpath=".//dbo_Fact_Turno" />
-              <xs:field xpath="sk_horario" />
-            </xs:keyref>
-            <xs:keyref name="FK__Fact_Turn__sk_pr__48CFD27E" refer="dbo_Dim_Profesional_Constraint1">
-              <xs:selector xpath=".//dbo_Fact_Turno" />
-              <xs:field xpath="sk_profesional" />
-            </xs:keyref>
-            <xs:keyref name="FK__Fact_Turn__sk_pa__47DBAE45" refer="dbo_Dim_Paciente_Constraint1">
-              <xs:selector xpath=".//dbo_Fact_Turno" />
-              <xs:field xpath="sk_paciente" />
-            </xs:keyref>
-            <xs:keyref name="FK__Fact_Turn__sk_ti__45F365D3" refer="dbo_Dim_Tiempo_Constraint1">
-              <xs:selector xpath=".//dbo_Fact_Turno" />
-              <xs:field xpath="sk_tiempo" />
+              <xs:field xpath="sk_especialidad" />
             </xs:keyref>
             <xs:keyref name="FK__Fact_Turn__sk_es__4AB81AF0" refer="dbo_Dim_Estado_Constraint1">
               <xs:selector xpath=".//dbo_Fact_Turno" />
               <xs:field xpath="sk_estado" />
             </xs:keyref>
-            <xs:keyref name="FK__Fact_Turn__sk_es__49C3F6B7" refer="Constraint1">
+            <xs:keyref name="FK__Fact_Turn__sk_ti__45F365D3" refer="dbo_Dim_Tiempo_Constraint1">
               <xs:selector xpath=".//dbo_Fact_Turno" />
-              <xs:field xpath="sk_especialidad" />
+              <xs:field xpath="sk_tiempo" />
+            </xs:keyref>
+            <xs:keyref name="FK__Fact_Turn__sk_pa__47DBAE45" refer="dbo_Dim_Paciente_Constraint1">
+              <xs:selector xpath=".//dbo_Fact_Turno" />
+              <xs:field xpath="sk_paciente" />
+            </xs:keyref>
+            <xs:keyref name="FK__Fact_Turn__sk_pr__48CFD27E" refer="dbo_Dim_Profesional_Constraint1">
+              <xs:selector xpath=".//dbo_Fact_Turno" />
+              <xs:field xpath="sk_profesional" />
+            </xs:keyref>
+            <xs:keyref name="FK__Fact_Turn__sk_ho__46E78A0C" refer="dbo_Dim_Horario_Constraint1">
+              <xs:selector xpath=".//dbo_Fact_Turno" />
+              <xs:field xpath="sk_horario" />
             </xs:keyref>
           </xs:element>
         </xs:schema>

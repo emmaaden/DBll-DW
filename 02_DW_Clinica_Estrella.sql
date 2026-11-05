@@ -1,15 +1,4 @@
-﻿/* =====================================================================
-   TP FINAL - BASE DE DATOS II
-   Script 02: Data Warehouse "DW_Clinica" - MODELO ESTRELLA
-
-   Hecho:       Fact_Turno       (grano: 1 fila = 1 turno)
-   Dimensiones: Dim_Tiempo, Dim_Horario, Dim_Paciente,
-                Dim_Profesional, Dim_Especialidad, Dim_Estado
-
-   Ejecutar DESPUES del script 01.
-   ===================================================================== */
-
-USE master;
+﻿USE master;
 GO
 
 IF DB_ID('DW_Clinica') IS NOT NULL
@@ -50,7 +39,7 @@ CREATE TABLE Dim_Tiempo (
     es_fin_de_semana  VARCHAR(2)   NOT NULL                -- 'Si' / 'No'
 );
 
--- Dimension Horario (franjas de 30 minutos). Clave HHMM.
+-- Dimension Horario (franjas de 30 minutos).
 CREATE TABLE Dim_Horario (
     sk_horario      INT          NOT NULL PRIMARY KEY,     -- 830 = 08:30
     hora            TIME         NOT NULL,
@@ -115,7 +104,6 @@ GO
    CARGA DE DIMENSIONES FIJAS (Tiempo, Horario, Estado)
    --------------------------------------------------------------------- */
 
--- Dim_Tiempo: 01/01/2024 a 31/12/2027
 ;WITH Dias AS (
     SELECT TOP (DATEDIFF(DAY, '20240101', '20271231') + 1)
            DATEADD(DAY, CAST(ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) AS INT) - 1,

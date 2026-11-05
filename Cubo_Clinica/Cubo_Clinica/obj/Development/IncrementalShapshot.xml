@@ -8,7 +8,7 @@
     <TransactionalDeployment>false</TransactionalDeployment>
     <PartitionDeployment>DeployPartitions</PartitionDeployment>
     <RoleDeployment>DeployRolesRetainMembers</RoleDeployment>
-    <ProcessingOption>Default</ProcessingOption>
+    <ProcessingOption>DoNotProcess</ProcessingOption>
     <OutputScript></OutputScript>
     <ImpactAnalysisFile></ImpactAnalysisFile>
     <ConfigurationSettingsDeployment>Deploy</ConfigurationSettingsDeployment>
@@ -26,14 +26,14 @@
       </ObjectSnapshot>
       <ObjectSnapshot>
         <Type>Microsoft.AnalysisServices.DataSourceView</Type>
-        <TimeStamp>9M/QrPvWg+ZIK9EKSFuWS0S0r1Y=3/11/2026 19:40:0420/10/2026 09:56:16</TimeStamp>
+        <TimeStamp>9M/QrPvWg+ZIK9EKSFuWS0S0r1Y=3/11/2026 20:21:2720/10/2026 09:56:16</TimeStamp>
         <ID>
           <String>DW Clinica</String>
         </ID>
       </ObjectSnapshot>
       <ObjectSnapshot>
         <Type>Microsoft.AnalysisServices.Dimension</Type>
-        <TimeStamp>1n2uQ1hez1z5kPMKMdvqxao7a6w=3/11/2026 20:18:153/11/2026 20:18:15</TimeStamp>
+        <TimeStamp>1n2uQ1hez1z5kPMKMdvqxao7a6w=3/11/2026 20:21:273/11/2026 20:18:15</TimeStamp>
         <ID>
           <String>Tiempo</String>
         </ID>
@@ -54,7 +54,7 @@
       </ObjectSnapshot>
       <ObjectSnapshot>
         <Type>Microsoft.AnalysisServices.Dimension</Type>
-        <TimeStamp>Q4JAQc/c9cg1wdRpwuoVRHzRZms=3/11/2026 17:23:1820/10/2026 09:56:16</TimeStamp>
+        <TimeStamp>Q4JAQc/c9cg1wdRpwuoVRHzRZms=3/11/2026 20:21:2720/10/2026 09:56:16</TimeStamp>
         <ID>
           <String>Profesional</String>
         </ID>
@@ -75,7 +75,7 @@
       </ObjectSnapshot>
       <ObjectSnapshot>
         <Type>Microsoft.AnalysisServices.Cube</Type>
-        <TimeStamp>g7tfLYjmiI8J6/o9eVo2HLwCyJU=3/11/2026 19:40:042/11/2026 20:21:08H52s2cIIOadMe2e9EkeCoyAd/fI=20/10/2026 09:56:1620/10/2026 09:56:16</TimeStamp>
+        <TimeStamp>g7tfLYjmiI8J6/o9eVo2HLwCyJU=3/11/2026 20:21:272/11/2026 20:21:08H52s2cIIOadMe2e9EkeCoyAd/fI=20/10/2026 09:56:1620/10/2026 09:56:16</TimeStamp>
         <ID>
           <String>Clinica</String>
         </ID>
@@ -92,5 +92,5 @@
   </Snapshot>
   <AssemblyLocations />
   <ProcessingComplete>true</ProcessingComplete>
-  <LastDeployed>2026-11-03T23:18:44.986667Z</LastDeployed>
+  <LastDeployed>2026-11-03T23:22:57.023333Z</LastDeployed>
 </DeploymentSnapshot>
